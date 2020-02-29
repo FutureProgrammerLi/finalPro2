@@ -1,0 +1,123 @@
+<template>
+<div>
+    <el-form :model="regisForm" ref="regisFormRef" :rules="checkRules" label-width="100px" class="demo-ruleForm">
+        <!-- -->
+        <el-form-item label="账号" prop="username">
+            <el-input type="text" v-model="regisForm.username" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+            <el-input type="password" v-model="regisForm.password" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="ensure">
+            <el-input type="password" v-model="regisForm.ensure" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+            <el-input type="text" v-model="regisForm.email" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button @click="signup">Signup</el-button>
+        </el-form-item>
+    </el-form>
+</div>
+</template>
+
+<script>
+import code from '../services/encrypt.js'
+
+export default {
+    name: "Regis",
+    data() {
+        var validatePass = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请输入密码'));
+            } else {
+                if (this.regisForm.ensure !== '') {
+                    this.$refs.regisFormRef.validateField('ensure');
+                }
+                callback();
+            }
+        };
+        var validatePass2 = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请再次输入密码'));
+            } else if (value !== this.regisForm.password) {
+                callback(new Error('两次输入密码不一致!'));
+            } else {
+                callback();
+            }
+        };
+        var checkIfExist = (rule, value, callback) => {
+            this.$http.post('/api/users/checkIfExist', value).then(res => {
+                if (res.data.status === 201) { //有必要吗?
+                    callback()
+                } else if (res.data.status === 422) {
+                    callback(new Error('账号已存在!'))
+                } 
+            })
+        };
+
+        return {
+            regisForm: {
+                username: '',
+                password: '',
+                ensure: '', //表格校验时用
+                email: ''
+            },
+            checkRules: {
+                username: [{
+                    validator: checkIfExist,
+                    trigger: 'blur'
+                }],
+                password: [{
+                    validator: validatePass,
+                    trigger: 'blur'
+                }],
+                ensure: [{
+                    validator: validatePass2,
+                    trigger: 'blur'
+                }]
+            }
+        }
+    },
+    methods: {
+        signup() {
+            // console.log(this.regisForm.password)
+            // console.log(encrypted)
+            // let decrypted = code.decryptFunc(encrypted)
+            // console.log(decrypted)
+            // this.regisForm.password = encrypted //怪怪的
+            let encrypted = code.encryptFunc(this.regisForm.password)
+            this.$http.post('/api/users/regis', {
+                "username": this.regisForm.username,
+                "password": encrypted,
+                "email":this.regisForm.email
+            }).then(res => {
+                console.log(res)
+                if(res.data.affectedRows === 1){ //判断依据好吗?
+                    this.$message.success('注册成功')
+                    //怎么改变isActive?
+                }else{            //前端校验了数据后有什么原因注册失败?
+                    this.$message.error('注册失败')
+                }
+        })
+    }
+   }
+}
+</script>
+
+<style scoped>
+.el-form .el-button {
+    display: inline;
+    border: none;
+    outline: none;
+    margin: 2.5rem 0 0;
+    /* width: 50%;
+    height: 3rem; */
+    border-radius: 3rem;
+    background: linear-gradient(90deg, rgb(91, 220, 243), rgb(145, 245, 240));
+    /* 181.154.254    245.189.253 */
+    box-shadow: 0 0 8px rgb(140, 224, 230);
+    cursor: pointer;
+    color: white;
+}
+</style>
