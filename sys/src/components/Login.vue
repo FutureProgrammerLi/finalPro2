@@ -3,14 +3,14 @@
 
     <el-form :model="loginForm" status-icon ref="loginFormRef" label-width="100px" class="demo-ruleForm">
         <el-form-item label="账号" prop="username">
-            <el-input type="text" v-model="loginForm.username" auto-complete="off"></el-input>
+            <el-input type="text"  placeholder="请输入账号" prefix-icon="el-icon-user" v-model="loginForm.username" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-            <el-input type="password" v-model="loginForm.password" auto-complete="off"></el-input>
+            <el-input type="password" placeholder="请输入密码" prefix-icon="el-icon-lock" v-model="loginForm.password" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item>
             <el-button @click="login">Login</el-button>
-            <el-button @click="verify">Verify</el-button>
+            
         </el-form-item>
     </el-form>
 
@@ -53,11 +53,6 @@ export default {
                 // }
 
             })
-        },
-        verify() {
-            this.$http.post('/api/test').then(res => {
-                console.log(res)
-            })
         }
     }
 }
@@ -95,9 +90,9 @@ export default {
     display: inline;
     border: none;
     outline: none;
-    margin: 2.5rem 0 0;
-    /* width: 50%;
-    height: 3rem; */
+    /* margin: 2.5rem 0 0; */
+     width: 50%;
+    /*height: 3rem; */
     border-radius: 3rem;
     background: linear-gradient(90deg, rgb(91, 220, 243), rgb(145, 245, 240));
     /* 181.154.254    245.189.253 */
@@ -105,4 +100,11 @@ export default {
     cursor: pointer;
     color: white;
 }
+
+/* .el-form-item{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%)
+} */
 </style>

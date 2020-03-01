@@ -1,14 +1,15 @@
 <template>
-<div>
+<div class="background">
     <div class="container">
-        <div class="pannel">
-            <div class="span">
-                <el-button type='text' @click='toggle' :class="isActive?'active':''" style="color:#ccc;" :style="isActive?styleObj:''">Login</el-button>/ <el-button type='text' class='sign' @click='toggle' :class="!isActive?'active':''" style="color:#ccc;" :style="!isActive?styleObj:''">Sign Up</el-button>
-            </div>
-            <Login  v-if="isActive" />
-            <Regis v-else @toggleChild="toggle" />
+        <div class="span">
+            <el-button type='text' @click='toggle1' :class="isActive?'active':''" style="color:#ccc;" :style="isActive?styleObj:''">Login</el-button>/ <el-button type='text' class='sign' @click='toggle2' :class="!isActive?'active':''" style="color:#ccc;" :style="!isActive?styleObj:''">Sign Up</el-button>
+        </div>
+        <div class="box">
+            <Login v-if="isActive" />
+            <Regis v-else @toggleChild="toggle2" />
         </div>
     </div>
+
 </div>
 </template>
 
@@ -25,35 +26,43 @@ export default {
     data() {
         return {
             isActive: true,
-            styleObj:{
-              fontSize:'1.4rem',
-              color:'#409EFF'
+            styleObj: {
+                fontSize: '1.8rem',
+                color: 'white'
             }
         }
     },
     methods: {
-        toggle() {
-            this.isActive = !this.isActive
+        toggle1() {
+            this.isActive = true
         },
-        
+        toggle2() {
+            this.isActive = false
+        } //真的好吗?
     }
 }
 </script>
 
-<style>
+<style scoped>
 body {
+    margin: 0;
+    padding: 0;
     height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .container {
-    position: relative;
-    width: 70rem;
+    position: absolute;
+    /* width: 70rem; */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background: rgba(11, 125, 179, 0.5);
+    padding: 30px;
+
 }
 
-.panel {
+/* .panel {
     width: 30%;
     margin: 10rem 0 0;
     position: absolute;
@@ -61,15 +70,30 @@ body {
     top: 0;
     display: flex;
     justify-content: center;
-}
-
-.el-form {
-    width: 30rem;
-    margin: 3rem 0 0;
-}
-/* .span{
-  font-size: 1.4rem!important;
-  color:#ccc;
 } */
 
+.el-form {
+    position: relative;
+    width: 12rem;
+    margin: 2rem 0 0;
+    /* margin-right:auto; */
+}
+
+.box {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+.background {
+    background: url(../assets/back.jpeg) no-repeat;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-size: cover
+}
+
+/* .span{
+  position: fixed;
+} */
 </style>
