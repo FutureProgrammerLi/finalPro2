@@ -5,8 +5,8 @@
             <div class="span">
                 <el-button type='text' @click='toggle' :class="isActive?'active':''" style="color:#ccc;" :style="isActive?styleObj:''">Login</el-button>/ <el-button type='text' class='sign' @click='toggle' :class="!isActive?'active':''" style="color:#ccc;" :style="!isActive?styleObj:''">Sign Up</el-button>
             </div>
-            <Login v-if="isActive" />
-            <Regis v-else />
+            <Login  v-if="isActive" />
+            <Regis v-else @toggleChild="toggle" />
         </div>
     </div>
 </div>
@@ -34,7 +34,8 @@ export default {
     methods: {
         toggle() {
             this.isActive = !this.isActive
-        }
+        },
+        
     }
 }
 </script>

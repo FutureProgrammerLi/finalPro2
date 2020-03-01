@@ -16,6 +16,7 @@
         </el-form-item>
         <el-form-item>
             <el-button @click="signup">Signup</el-button>
+            <el-button @click="test">Test </el-button>
         </el-form-item>
     </el-form>
 </div>
@@ -100,6 +101,9 @@ export default {
                     this.$message.error('注册失败')
                 }
         })
+    },
+    test(){
+        this.$emit('toggleChild')
     }
    }
 }
