@@ -5,12 +5,11 @@
         <el-form-item label="账号" prop="username">
             <el-input type="text" placeholder="请输入账号" prefix-icon="el-icon-user" v-model="loginForm.username" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-            <el-input type="password" placeholder="请输入密码" prefix-icon="el-icon-lock" v-model="loginForm.password" auto-complete="off"></el-input>
+        <el-form-item label="密码" prop="password" ref="passRef">
+            <el-input type="password"  placeholder="请输入密码" prefix-icon="el-icon-lock" v-model="loginForm.password" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item>
             <el-button @click="login">Login</el-button>
-
         </el-form-item>
     </el-form>
 
@@ -70,10 +69,12 @@ export default {
                                 this.$message.success('登录成功!')
                                 this.$store.commit('getUserInfo', res.data)
                                 window.sessionStorage.setItem('token', res.data.token) //存储token到sessionStorage里面
-                                console.log(this.$store.state.userInfo)
+                                // console.log(this.$store.state.userInfo)
+                                this.$router.push('/welcome')
                             } else {
                                 this.$message.error('密码错误,请重新输入!') //清空吗? validator好还是按登录才验证好?
                                 // console.log(this.$store.state.userInfo)
+                                this.$refs['passRef'].resetField()
                             }
                         }
                         // if(res.data.status === 406){           
