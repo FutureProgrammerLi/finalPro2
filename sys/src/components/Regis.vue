@@ -3,7 +3,7 @@
     <el-form :model="regisForm" ref="regisFormRef" :rules="checkRules" label-width="100px" class="demo-ruleForm">
         <!-- -->
         <el-form-item label="账号:" prop="username">
-            <el-input type="text"   v-model="regisForm.username" auto-complete="off"></el-input>
+            <el-input type="text" v-model="regisForm.username" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="密码:" prop="password">
             <el-input type="password" v-model="regisForm.password" auto-complete="off"></el-input>
@@ -12,7 +12,7 @@
             <el-input type="password" v-model="regisForm.ensure" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="邮箱:" prop="email">
-            <el-input type="text" v-model="regisForm.email" auto-complete="off"></el-input>
+            <el-input type="text" v-model="regisForm.email"></el-input>
         </el-form-item>
         <el-form-item>
             <el-button @click="signup">Signup</el-button>
@@ -52,9 +52,17 @@ export default {
                     callback()
                 } else if (res.data.status === 422) {
                     callback(new Error('账号已存在!'))
-                } 
+                }
             })
         };
+        var checkEmail = (rule, value, callback) => {
+            let reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+            if (reg.test(value)) {
+                callback()
+            } else {
+                callback(new Error('请输入正确的邮箱地址!'))
+            }
+        }
 
         return {
             regisForm: {
@@ -65,17 +73,39 @@ export default {
             },
             checkRules: {
                 username: [{
-                    validator: checkIfExist,
-                    trigger: 'blur'
-                }],
-                password: [{
-                    validator: validatePass,
-                    trigger: 'blur'
-                }],
-                ensure: [{
-                    validator: validatePass2,
-                    trigger: 'blur'
-                }]
+                        required: true,
+                        message: '请输入账号',
+                        trigger: 'blur'
+                    },
+                    {
+                        validator: checkIfExist,
+                        trigger: 'blur'
+                    }
+                ],
+                password: [
+
+                    {
+                        validator: validatePass,
+                        trigger: 'blur'
+                    }
+                ],
+                ensure: [
+
+                    {
+                        validator: validatePass2,
+                        trigger: 'blur'
+                    }
+                ],
+                email: [{
+                        required: true,
+                        message: '请输入邮箱地址',
+                        trigger: 'blur'
+                    },
+                    {
+                        validator: checkEmail,
+                        trigger: 'blur'
+                    }
+                ]
             }
         }
     },
@@ -86,27 +116,32 @@ export default {
             // let decrypted = code.decryptFunc(encrypted)
             // console.log(decrypted)
             // this.regisForm.password = encrypted //怪怪的
-            let encrypted = code.encryptFunc(this.regisForm.password)
-            this.$http.post('/api/users/regis', {
-                "username": this.regisForm.username,
-                "password": encrypted,
-                "email":this.regisForm.email
-            }).then(res => {
-                console.log(res)
-                if(res.data.affectedRows === 1){ //判断依据好吗?
-                    this.$message.success('注册成功')
-                    this.$emit('toggleChild')
-                    //怎么改变isActive?
-                }else{            //前端校验了数据后有什么原因注册失败?
-                    this.$message.error('注册失败')
+            this.$refs.regisFormRef.validate((valid) => {
+                if (valid) {
+                    let encrypted = code.encryptFunc(this.regisForm.password)
+                    this.$http.post('/api/users/regis', {
+                        "username": this.regisForm.username,
+                        "password": encrypted,
+                        "email": this.regisForm.email
+                    }).then(res => {
+                        console.log(res)
+                        if (res.data.affectedRows === 1) { //判断依据好吗?
+                            this.$message.success('注册成功')
+                            this.$emit('toggleChild')
+                            //怎么改变isActive?
+                        } else { //前端校验了数据后有什么原因注册失败?
+                            this.$message.error('注册失败')
+                        }
+                    })
                 }
-        })
-    } 
-   }
+            })
+
+        }
+    }
 }
 </script>
 
-<style >
+<style>
 .el-form .el-button {
     display: inline;
     border: none;
@@ -123,12 +158,14 @@ export default {
 }
 
 .el-input__inner {
-    border: 2px solid rgb(91,220,243);
+    border: 2px solid rgb(91, 220, 243);
     border-radius: 0px;
-} 
-.el-form-item__label{
-    color:white;
 }
+
+.el-form-item__label {
+    color: white;
+}
+
 /* .el-input{
     margin:1rem 0;
     position: relative;

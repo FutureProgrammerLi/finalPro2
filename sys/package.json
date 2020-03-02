@@ -46,7 +46,8 @@
       "no-unused-vars": "off",
       "no-console": "off",
       "no-irregular-whitespace": "off",
-      "no-debugger": "off"
+      "no-debugger": "off",
+      "no-useless-escape":"off"
     }
   },
   "browserslist": [

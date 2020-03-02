@@ -15,6 +15,7 @@ axios.interceptors.request.use(config=>{        //必须返回config这个对象
   config.headers.Authorization = window.sessionStorage.getItem('token') //将token设置在请求头中
   return config
 })
+Vue.prototype.$message =ElementUI.Message;
 
 new Vue({
   store,

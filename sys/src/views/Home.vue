@@ -57,7 +57,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 400px;
-    background: rgba(11, 125, 179, 0.5);
+    background: rgba(0,0,0, 0.5);
     padding: 30px;
 
 }
