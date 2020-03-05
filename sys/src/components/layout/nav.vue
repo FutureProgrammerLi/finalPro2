@@ -25,6 +25,7 @@ export default {
     methods:{
         toggleClick(){
             this.isActive = !this.isActive
+            this.$emit('toggleWidthChild')
         }
     }
 }

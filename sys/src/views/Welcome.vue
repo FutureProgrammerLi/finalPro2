@@ -5,8 +5,22 @@
             <el-col :span="5"> -->
         <!--sidebar要设置自适应,全展示=>仅剩图标=>全消失  -->
 
-        <el-aside width="200px">
-            <sidebar />
+        <el-aside :width="isCollapse?'64px':'200px'">
+            <el-scrollbar wrap-class="scrollbar-wrapper">
+                <el-menu :unique-opened="false" :collapse-transition="false" mode="vertical" router >
+                    <!-- <el-submenu v-for="item in $store.state.menuList" :key="item.id" :index="item.path" >
+               <template slot="title">
+                   <span> {{item.authName}}</span>
+               </template>
+           </el-submenu> -->
+                    <el-menu-item v-for="item in $store.state.menuList" :key="item.id" :index="item.path" >
+                        <template slot="title">
+                            <span>{{item.authName}}</span>
+                        </template>
+                    </el-menu-item>
+                </el-menu>
+
+            </el-scrollbar>
         </el-aside>
         <!-- </el-col>
             <el-col :span="19"> -->
@@ -14,11 +28,14 @@
             <app-main /> -->
         <el-container>
             <el-header>
-                <navi />
+                <navi @toggleWidthChild="toggleWidthParent" />
             </el-header>
             <el-main>
                 <router-view />
             </el-main>
+            <el-footer>
+                <myFooter />
+            </el-footer>
         </el-container>
 
         <!-- </el-col>
@@ -28,12 +45,25 @@
 </template>
 
 <script>
-import sidebar from '../components/layout/sidebar'
 import navi from '../components/layout/nav'
+import myFooter from '../components/layout/myFooter'
 export default {
     components: {
-        sidebar,
-        navi
+        navi,
+        myFooter
+    },
+    data() {
+        return {
+            isCollapse: false
+        }
+    },
+    methods: {
+        toggleWidthParent() {
+            this.isCollapse = !this.isCollapse
+        }
+    },
+    created() {
+        this.$store.dispatch('asyncGetList')
     }
 }
 </script>
@@ -43,6 +73,7 @@ div,
 .el-container {
     height: 100%;
 }
+
 /* 
 .el-header {
     background-color: #B3C0D1;
@@ -67,5 +98,13 @@ div,
 
 body>.el-container {
     margin-bottom: 40px;
+}
+
+.scrollbar-wrapper {
+    overflow-x: hidden !important;
+}
+
+.el-scrollbar {
+    height: 100%;
 }
 </style>

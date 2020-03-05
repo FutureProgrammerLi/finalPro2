@@ -15,8 +15,31 @@ const routes = [
   {
     path:'/welcome',
     name:'Welcome',
-    component:()=>import('../views/Welcome.vue')
-  }
+    component:()=>import('../views/Welcome.vue'),
+    children:[
+      {
+        path:'/home',
+        name:'Info',
+        component:()=>import('../views/Info.vue')
+      },
+      {
+        path:'/post',
+        name:'Post',
+        component:()=>import('../views/Post.vue')
+      },
+      {
+        path:'/draft',
+        name:'Draft',
+        component:()=>import('../views/Draft.vue')
+      },
+      {
+        path:'/help',
+        name:'Help',
+        component:()=>import('../views/Help.vue')
+      }
+    ]
+  },
+  
   // {
   //   path: '/about',
   //   name: 'About',
@@ -34,6 +57,14 @@ router.beforeEach((to,from,next)=>{     //简易判断是否带有token,没有�
   if(to.path ==='/') return next()  //后台会再校验一次 server/users里面
   const tokenStr = window.sessionStorage.getItem('token')
   if(!tokenStr)  return next('/')
+  next()
+})
+
+router.beforeEach((to,from,next)=>{    //退出登录
+  if(to.path ==='/exit'){
+    window.sessionStorage.clear()
+    return next('/')
+  }
   next()
 })
 

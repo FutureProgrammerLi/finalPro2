@@ -9,15 +9,23 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    userInfo:''
+    userInfo:'',
+    menuList:{}
   },
   mutations: {
     getUserInfo(state,userInfo){
      state.userInfo = userInfo
+    },
+    getList(state,data){
+      state.menuList = data
     }
   },
   actions: {
-
+    asyncGetList(context){
+      axios.get('/api/getList').then(res=>{
+        context.commit('getList',res.data)
+      })
+    }
   },
   modules: {
   }
