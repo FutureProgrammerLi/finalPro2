@@ -70,7 +70,7 @@ export default {
                                 this.$store.commit('getUserInfo', res.data)
                                 window.sessionStorage.setItem('token', res.data.token) //存储token到sessionStorage里面
                                 // console.log(this.$store.state.userInfo)
-                                this.$router.push('/welcome')
+                                this.$router.push('/home')
                             } else {
                                 this.$message.error('密码错误,请重新输入!') //清空吗? validator好还是按登录才验证好?
                                 // console.log(this.$store.state.userInfo)

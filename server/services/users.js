@@ -17,7 +17,7 @@ connection.query(querysql,(err,querydata)=>{
           res.send(err)
       }
       let result = JSON.parse(JSON.stringify(querydata))
-      console.log(result)
+    //   console.log(result)
       if(result.length != 0){          
          //登录成功,根据id生成token并返回
             let jwt = new jwtUtil(result[0].id)

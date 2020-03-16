@@ -7,26 +7,24 @@
 
         <el-aside :width="isCollapse?'64px':'200px'">
             <el-scrollbar wrap-class="scrollbar-wrapper">
-                <el-menu :unique-opened="false" :collapse-transition="false" mode="vertical" router >
-                    <!-- <el-submenu v-for="item in $store.state.menuList" :key="item.id" :index="item.path" >
-               <template slot="title">
-                   <span> {{item.authName}}</span>
-               </template>
-           </el-submenu> -->
-                    <el-menu-item v-for="item in $store.state.menuList" :key="item.id" :index="item.path" >
-                        <template slot="title">
-                            <span>{{item.authName}}</span>
-                        </template>
+                <div id="topic"> 在线投稿系统</div>
+                <el-menu class="el-menu-vertical-demo" default-active="/home" :collapse="isCollapse" :unique-opened="true" :collapse-transition="false" router>
+                    <el-menu-item :index="item.path" v-for="item in $store.state.menuList" :key="item.id">
+                        <i :class="iconObj[item.id]"></i>
+                        <span slot="title"> {{item.authName}}</span>
                     </el-menu-item>
+                    <!-- <el-menu-item index="2">       //Thanks demo
+                        <i class="el-icon-menu"></i>
+                        <span slot="title">导航二</span>
+                    </el-menu-item> -->
                 </el-menu>
-
             </el-scrollbar>
         </el-aside>
         <!-- </el-col>
             <el-col :span="19"> -->
         <!-- <navbar />
             <app-main /> -->
-        <el-container>
+        <el-container style="height:500%;">
             <el-header>
                 <navi @toggleWidthChild="toggleWidthParent" />
             </el-header>
@@ -37,9 +35,6 @@
                 <myFooter />
             </el-footer>
         </el-container>
-
-        <!-- </el-col>
-        </el-row> -->
     </el-container>
 </div>
 </template>
@@ -54,12 +49,21 @@ export default {
     },
     data() {
         return {
-            isCollapse: false
+            isCollapse: false,
+            iconObj: {
+                '1': 'el-icon-user',
+                '2': 'el-icon-edit-outline',
+                '3': 'el-icon-notebook-2',
+                '4': 'el-icon-help',
+                '5': 'el-icon-back'
+            }
         }
     },
     methods: {
         toggleWidthParent() {
             this.isCollapse = !this.isCollapse
+            let topic = document.getElementById('topic')
+            this.isCollapse?topic.style.display = "none":topic.style.display ='block'
         }
     },
     created() {
@@ -100,11 +104,19 @@ body>.el-container {
     margin-bottom: 40px;
 }
 
-.scrollbar-wrapper {
-    overflow-x: hidden !important;
+/deep/.el-scrollbar__wrap {
+    overflow: hidden;
 }
 
-.el-scrollbar {
-    height: 100%;
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 200px;
+    min-height: 400px;
+}
+#topic{
+    margin:40px 0;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color:rgb(76, 243, 187)
 }
 </style>

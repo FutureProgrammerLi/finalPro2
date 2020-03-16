@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 
 
@@ -13,15 +15,15 @@ const routes = [
     component: Home
   },
   {
-    path:'/welcome',
+    path:'/home',
     name:'Welcome',
     component:()=>import('../views/Welcome.vue'),
     children:[
-      {
-        path:'/home',
-        name:'Info',
-        component:()=>import('../views/Info.vue')
-      },
+      // {
+      //   path:'/home',
+      //   name:'Info',
+      //   component:()=>import('../views/Info.vue')
+      // },
       {
         path:'/post',
         name:'Post',
@@ -68,4 +70,12 @@ router.beforeEach((to,from,next)=>{    //退出登录
   next()
 })
 
+router.beforeEach((to,from,next)=>{
+  NProgress.start()
+  next()
+})
+
+router.afterEach(()=>{
+  NProgress.done()
+})
 export default router

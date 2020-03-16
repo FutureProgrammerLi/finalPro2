@@ -44,12 +44,12 @@ app.use(function (req,res,next){
     let jwt = new JwtUtil(token)
     let result = jwt.verifyToken()  //return了res
     // console.log(result)
-    console.log('1')
+    // console.log('1')
     if(result == 'err'){
-      console.log('2')
+      // console.log('2')
       res.send({"status":"403","msg":"登录已过期,请重新登录"})
     }else{
-      console.log('3')
+      // console.log('3')
       next()
     }
   }

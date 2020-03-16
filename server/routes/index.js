@@ -9,4 +9,6 @@ connection.connect(()=>{
 /* GET home page. */
 router.post('/test', service.test);
 
+router.get('/getList',service.returnList)
+
 module.exports = router;
