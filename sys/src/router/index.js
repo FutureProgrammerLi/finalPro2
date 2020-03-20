@@ -19,11 +19,11 @@ const routes = [
     name:'Welcome',
     component:()=>import('../views/Welcome.vue'),
     children:[
-      // {
-      //   path:'/home',
-      //   name:'Info',
-      //   component:()=>import('../views/Info.vue')
-      // },
+      {
+        path:'/info',
+        name:'Info',
+        component:()=>import('../views/Info.vue')
+      },
       {
         path:'/post',
         name:'Post',
@@ -38,6 +38,16 @@ const routes = [
         path:'/help',
         name:'Help',
         component:()=>import('../views/Help.vue')
+      },
+      {
+        path:'/examine',
+        name:'Examine',
+        component:()=>import('../views/Examine.vue')
+      },
+      {
+        path:'/announce',
+        name:'Announce',
+        component:()=>import('../views/Announce.vue')
       }
     ]
   },

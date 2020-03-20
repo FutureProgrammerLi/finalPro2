@@ -37,8 +37,8 @@ export default {
         }
         return {
             loginForm: {
-                username: '',
-                password: ''
+                username: 'zhanghao',
+                password: 'asdf456'
             },
             loginFormRules: { //避免输入框开头有*
                 username: [{
@@ -68,9 +68,10 @@ export default {
                                 // console.log(res.data)
                                 this.$message.success('登录成功!')
                                 this.$store.commit('getUserInfo', res.data)
+                                this.$store.dispatch('asyncGetUpload',res.data.username)
                                 window.sessionStorage.setItem('token', res.data.token) //存储token到sessionStorage里面
                                 // console.log(this.$store.state.userInfo)
-                                this.$router.push('/home')
+                                this.$router.push('/info')
                             } else {
                                 this.$message.error('密码错误,请重新输入!') //清空吗? validator好还是按登录才验证好?
                                 // console.log(this.$store.state.userInfo)

@@ -1,30 +1,25 @@
 <template>
 <div>
     <el-container>
-        <!-- <el-row>
-            <el-col :span="5"> -->
-        <!--sidebar要设置自适应,全展示=>仅剩图标=>全消失  -->
-
         <el-aside :width="isCollapse?'64px':'200px'">
             <el-scrollbar wrap-class="scrollbar-wrapper">
                 <div id="topic"> 在线投稿系统</div>
-                <el-menu class="el-menu-vertical-demo" default-active="/home" :collapse="isCollapse" :unique-opened="true" :collapse-transition="false" router>
+                <el-menu class="el-menu-vertical-demo" default-active="/info" :collapse="isCollapse" :unique-opened="true" :collapse-transition="false" router>
                     <el-menu-item :index="item.path" v-for="item in $store.state.menuList" :key="item.id">
-                        <i :class="iconObj[item.id]"></i>
+                        <i :class="iconObj[item.authName]"></i>
                         <span slot="title"> {{item.authName}}</span>
                     </el-menu-item>
+                    
                     <!-- <el-menu-item index="2">       //Thanks demo
                         <i class="el-icon-menu"></i>
                         <span slot="title">导航二</span>
                     </el-menu-item> -->
                 </el-menu>
+                <el-button @click="test">test</el-button>
             </el-scrollbar>
         </el-aside>
-        <!-- </el-col>
-            <el-col :span="19"> -->
-        <!-- <navbar />
-            <app-main /> -->
-        <el-container style="height:500%;">
+  
+        <el-container >
             <el-header>
                 <navi @toggleWidthChild="toggleWidthParent" />
             </el-header>
@@ -42,6 +37,7 @@
 <script>
 import navi from '../components/layout/nav'
 import myFooter from '../components/layout/myFooter'
+import obj from '../services/routes'
 export default {
     components: {
         navi,
@@ -50,13 +46,17 @@ export default {
     data() {
         return {
             isCollapse: false,
-            iconObj: {
-                '1': 'el-icon-user',
-                '2': 'el-icon-edit-outline',
-                '3': 'el-icon-notebook-2',
-                '4': 'el-icon-help',
-                '5': 'el-icon-back'
-            }
+            iconObj: {      //毫无可复用性..
+                '个人主页': 'el-icon-s-home',
+                '我要投稿': 'el-icon-edit-outline',
+                '草稿箱': 'el-icon-notebook-2',
+                '我要帮助': 'el-icon-help',
+                '退出': 'el-icon-back',
+                '发布公告':'el-icon-mic',
+                '审稿':'el-icon-view'
+            },
+            routeMenu:[],
+            roleid:''
         }
     },
     methods: {
@@ -64,11 +64,15 @@ export default {
             this.isCollapse = !this.isCollapse
             let topic = document.getElementById('topic')
             this.isCollapse?topic.style.display = "none":topic.style.display ='block'
+        },
+        test(){
+           console.log(this.$store.state.menuList)
         }
     },
     created() {
-        this.$store.dispatch('asyncGetList')
+        this.$store.dispatch('asyncGetList',this.$store.state.userInfo.roleid)
     }
+    
 }
 </script>
 
@@ -78,26 +82,15 @@ div,
     height: 100%;
 }
 
-/* 
-.el-header {
-    background-color: #B3C0D1;
-    color: #333;
-    text-align: center;
-    line-height: 60px;
-} */
-
-/* .el-aside {
-    background-color: #D3DCE6;
-    color: #333;
-    text-align: center;
-    line-height: 200px;
-} */
-
-.el-main {
+/* .el-main {
     background-color: #E9EEF3;
     color: #333;
     text-align: center;
     line-height: 160px;
+} */
+.el-main{
+    overflow: hidden;
+    background-color: rgb(187, 247, 255);
 }
 
 body>.el-container {
