@@ -9,6 +9,7 @@ connection.connect(()=>{
 /* GET home page. */
 router.post('/test', service.test);
 
-router.get('/getList',service.returnList)
+router.get('/getList/:roleid',service.returnList)
 
+router.get('/getUploadInfo/:username',service.returnUpload)
 module.exports = router;

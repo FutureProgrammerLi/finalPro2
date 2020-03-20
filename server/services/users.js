@@ -12,6 +12,7 @@ exports.login = function(req,res){       //登录接口
 //   const checksql =`select * from userlist where username='${username}' and password='${password};'`  //存在,返回什么东西?直接在上一条结果校验密码是否正确?返回对象吗?
 var {username,password} = req.body
 const querysql = `select * from userlist where username='${username}'` //查找是否有该账号,无则返回一个空数组
+
 connection.query(querysql,(err,querydata)=>{
       if(err){
           res.send(err)
@@ -25,7 +26,7 @@ connection.query(querysql,(err,querydata)=>{
             let resObj = {}
             let statusObj = {"status":200,"msg":"登录成功"}
             Object.assign(resObj,result[0],statusObj)    //信息+状态+token
-            resObj.token = token 
+            resObj.token = token
             res.send(resObj)
       }else{           //找不到对应的的账号
        res.send({"status":422,"msg":"账号不存在!"})
@@ -51,7 +52,7 @@ exports.check = function(req,res){
     const sql = `select count(*) from userlist where username ='${username}'`
     connection.query(sql,(err,data)=>{
         if(err){
-            res.send(err)
+            res.sen(err)
         }
         let result = JSON.parse(JSON.stringify(data)) //去除RowDataPacket
         // console.log(result[0]['count(*)'])    //{'count(*)':0}

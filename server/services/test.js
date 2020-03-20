@@ -1,11 +1,14 @@
 const connection = require('../db/conn')
+function dealWithRoutes(id){
+
+}
 exports.test = function(req,res,next){
     res.send('test service')
 }
 
 exports.returnList = (req,res,next)=>{
-    const sql = `select * from leftlist ;`
-    
+    let roleid = req.params.roleid
+    const sql = `select * from leftlist where permission>=${roleid};`
     function treeMenu(data){
         var parent = []
         for (let val of data){ //一级目录
@@ -39,7 +42,9 @@ exports.returnList = (req,res,next)=>{
             res.send(err)
         }
         data = JSON.parse(JSON.stringify(data))
-        res.send(treeMenu(data))
+        // console.log(data)
+        res.send(data)
+        // res.send(treeMenu(data))
     })
         // let parent = []  //所有的一级目录
         // for(let i = 0;i<data.length;i++){
@@ -55,5 +60,18 @@ exports.returnList = (req,res,next)=>{
         // console.log(treeMenu(data,2))
         // console.log(parent) //问题,每个1级都有4个二级??
         // res.send(parent)
+}
 
+exports.returnUpload = (req,res,next)=>{
+    // console.log(req.params)
+    let {username} = req.params
+    console.log(username)
+    const sql = `select * from uploadinfo where username='${username}';`
+    connection.query(sql,(err,data)=>{
+        if(err){
+            res.send(err)
+        }
+        data = JSON.parse(JSON.stringify(data))
+        res.send(data)
+    })
 }
