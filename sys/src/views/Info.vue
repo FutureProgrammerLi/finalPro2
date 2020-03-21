@@ -58,7 +58,8 @@ export default {
     name: 'Info',
     data() {
         return {
-        uploadInfo:this.$store.state.uploadInfo
+            // userInfo: this.$store.state.userInfo,
+            // uploadInfo:this.$store.state.uploadInfo
         }
     },
     methods: {
@@ -66,15 +67,13 @@ export default {
             console.log(this.uploadInfo)//为什么是个数组? dispatch的问题吗?
         }
     },
-    computed: {
-        ...mapState(['userInfo'])
+    computed:{
+      ...mapState(['userInfo','uploadInfo'])
     },
-    // beforeCreat(){
-    //     this.$store.dispatch('asyncGetUpload',this.$store.state.userInfo.username)   //再用同步好像怪怪的
-    // },
     created(){
-        
+        this.$store.dispatch('asyncGetUpload',this.$store.state.userInfo.username)
     }
+
 }
 </script>
 
