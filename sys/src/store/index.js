@@ -7,7 +7,7 @@ import axios from 'axios'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state: {
+  state: localStorage.getItem("state") ? JSON.parse(localStorage.getItem("state")):{
     userInfo:'',
     menuList:[],
     uploadInfo:''

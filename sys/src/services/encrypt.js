@@ -1,5 +1,5 @@
 const crypto = require('crypto')
-const key = "AA349B710F20CC17"     //MD
+var key = "AA349B710F20CC17"     //MD
 
 
 function encryptFunc(msg) {
@@ -13,7 +13,7 @@ function encryptFunc(msg) {
     if(typeof msg =='object'){
         msg = JSON.stringify(msg)
     }
-    const cipher = crypto.createCipher('aes-256-cbc', key);
+    var cipher = crypto.createCipher('aes-256-cbc', key);
     var crypted = cipher.update(msg, 'utf8', 'hex');
     crypted += cipher.final('hex');
     return crypted;
@@ -22,8 +22,8 @@ function encryptFunc(msg) {
 function decryptFunc(encrypted){
     // let decrypted = crypto.AES.decrypt(encrypted,key)
     // return decrypted
-    const decipher = crypto.createDecipher('aes-256-cbc', key);
-    var decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    var decipher = crypto.createDecipher('aes-256-cbc', key);
+    var decrypted = decipher.update(encrypted,'hex','utf8');
     decrypted += decipher.final('utf8');
     return decrypted;
     }

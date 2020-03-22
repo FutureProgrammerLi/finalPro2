@@ -75,8 +75,9 @@ router.beforeEach((to,from,next)=>{     //简易判断是否带有token,没有�
 
 router.beforeEach((to,from,next)=>{    //退出登录
   if(to.path ==='/exit'){
+    // console.log(router)
     window.sessionStorage.clear()
-    return next('/')
+    return next(' /')
   }
   next()
 })

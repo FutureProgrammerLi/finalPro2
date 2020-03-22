@@ -14,6 +14,9 @@
         <el-form-item label="邮箱:" prop="email">
             <el-input type="text" v-model="regisForm.email"></el-input>
         </el-form-item>
+        <el-form-item label="手机号码:" prop="phone">
+            <el-input type="text" v-model="regisForm.phone"></el-input>
+        </el-form-item>
         <el-form-item>
             <el-button @click="signup">Signup</el-button>
         </el-form-item>
@@ -62,6 +65,18 @@ export default {
             } else {
                 callback(new Error('请输入正确的邮箱地址!'))
             }
+        };
+        var checkPhone = (rule,value,callback)=>{
+            if( value === ''){
+                callback(new Error('请输入手机号码'))
+            }else{
+                const regPhone = /^1[3456789]\d{9}$/
+                if(regPhone.test(value)){
+                    callback()
+                }else{
+                    callback(new Error('请输入正确的手机号码!'))
+                }
+            }
         }
 
         return {
@@ -69,7 +84,8 @@ export default {
                 username: '',
                 password: '',
                 ensure: '', //表格校验时用
-                email: ''
+                email: '',
+                phone:''
             },
             checkRules: {
                 username: [{
@@ -105,7 +121,11 @@ export default {
                         validator: checkEmail,
                         trigger: 'blur'
                     }
-                ]
+                ],
+                phone:[{
+                    validator:checkPhone,
+                    trigger:'blur'
+                }]
             }
         }
     },
@@ -122,9 +142,10 @@ export default {
                     this.$http.post('/api/users/regis', {
                         "username": this.regisForm.username,
                         "password": encrypted,
-                        "email": this.regisForm.email
+                        "email": this.regisForm.email,
+                        "phone": this.regisForm.phone
                     }).then(res => {
-                        console.log(res)
+                        // console.log(res)
                         if (res.data.affectedRows === 1) { //判断依据好吗?
                             this.$message.success('注册成功')
                             this.$emit('toggleChild')
@@ -141,13 +162,12 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .el-form .el-button {
     display: inline;
     border: none;
     outline: none;
     margin: 2.5rem 0 0;
-    width: 50%;
     /*height: 3rem; */
     border-radius: 3rem;
     background: linear-gradient(90deg, rgb(91, 220, 243), rgb(145, 245, 240));
@@ -162,7 +182,7 @@ export default {
     border-radius: 0px;
 }
 
-.el-form-item__label {
+/deep/.el-form-item__label {
     color: white;
 }
 

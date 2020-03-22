@@ -65,7 +65,7 @@ exports.returnList = (req,res,next)=>{
 exports.returnUpload = (req,res,next)=>{
     // console.log(req.params)
     let {username} = req.params
-    console.log(username)
+    // console.log(username)
     const sql = `select * from uploadinfo where username='${username}';`
     connection.query(sql,(err,data)=>{
         if(err){

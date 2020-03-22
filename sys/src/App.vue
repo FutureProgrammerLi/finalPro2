@@ -10,7 +10,14 @@
 
 <script>
 export default {
-  
+  mounted() {
+      window.addEventListener('unload',this.saveState)    
+  },
+  methods: {
+    saveState(){
+      localStorage.setItem("state",JSON.stringify(this.$store.state)) //刷新后state也会被保存,存了再loaclStorage
+    }
+  }
 }
 </script>
 

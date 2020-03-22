@@ -66,7 +66,7 @@ export default {
             this.isCollapse?topic.style.display = "none":topic.style.display ='block'
         },
         test(){
-           console.log(this.$store.state.menuList)
+           console.log(this.$store.state.userInfo)
         }
     },
     created() {

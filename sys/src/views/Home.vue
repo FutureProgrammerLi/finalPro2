@@ -81,8 +81,9 @@ body {
 
 .box {
     position: relative;
-    height: 300px;
+    height: 400px;
     width: 100%;
+    margin-top:50px;
 }
 
 .background {

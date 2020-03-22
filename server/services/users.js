@@ -36,9 +36,10 @@ connection.query(querysql,(err,querydata)=>{
 }
 
 exports.signup = function(req,res){
-let {username,password,email} = req.body
-const sql = `insert into userlist(username , password , email) values('${username}', '${password}' , '${email}');`
-connection.query(sql , (err,data)=>{
+let {username,password,email,phone} = req.body
+const sql1 = `insert into userlist(username , password , email , phone) values('${username}', '${password}' , '${email}' ,'${phone}');`
+const sql2 = `insert into uploadinfo(username) value('${username}');`
+connection.query(sql1 , sql2,  (err,data)=>{
     if(err){
         res.send(err) //res.send({"status":"403","msg":"登录已过期,请重新登录"})
     }
