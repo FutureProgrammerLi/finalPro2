@@ -11,7 +11,10 @@
         <div>
             <i class="el-icon-message"></i>您的邮箱: {{userInfo.email?userInfo.email:'NULL'}}
         </div>
-        <div>选择您的操作:<el-button type="text" @click="changePwd">修改密码</el-button> | <el-button type="text" style="padding-top:5px;">修改资料</el-button>
+        <div>
+            <i class="el-icon-phone"></i>手机号码: {{userInfo.phone?userInfo.phone:'NULL'}}
+        </div>
+        <div>选择您的操作:<el-button type="text" @click="changePwd">修改密码</el-button> | <el-button type="text" style="padding-top:5px;" @click="changeInfo">修改资料</el-button>
         </div>
     </el-card>
 
@@ -66,9 +69,29 @@
         </el-form>
         <span slot="footer">
             <el-button @click="pwdDialog = false">取 消</el-button>
-            <el-button type="primary" @click="submitForm('pwdFormRef')">确 定</el-button>
+            <el-button type="primary" @click="submitPwdForm('pwdFormRef')">确 定</el-button>
         </span>
     </el-dialog>
+
+    <!-- 修改资料的dialog -->
+    <el-dialog title="修改个人资料" :visible.sync="infoDialog" width="30%" @close='handleClose'>
+        <el-form :model="infoForm" ref="infoFormRef" label-width="100px" :rules="infoRules">
+            <el-form-item label="您的账号:" prop="username">
+                <el-input type="text" v-model="infoForm.username" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="邮箱:" prop="email">
+                <el-input type="text" v-model="infoForm.email"></el-input>
+            </el-form-item>
+            <el-form-item label="手机号码:" prop="phone">
+                <el-input type="text" v-model="infoForm.phone"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer">
+            <el-button @click="infoDialog = false">取 消</el-button>
+            <el-button type="primary" @click="submitInfoForm('infoFormRef')">确 定</el-button>
+        </span>
+    </el-dialog>
+
 </div>
 </template>
 
@@ -96,12 +119,13 @@ export default {
         };
         var phoneCheck = (rule, value, callback) => {
             if (value === '') {
-                callback(new Error('请输入账号绑定的手机号码!'))
+                callback(new Error('请输入手机号码'))
             } else {
-                if (value === this.$store.state.userInfo.phone) {
+                const regPhone = /^1[3456789]\d{9}$/
+                if (regPhone.test(value)) {
                     callback()
                 } else {
-                    callback(new Error('您输入的手机号码不正确!'))
+                    callback(new Error('请输入正确的手机号码!'))
                 }
             }
         };
@@ -128,6 +152,14 @@ export default {
                 callback();
             }
         };
+        var checkEmail = (rule, value, callback) => {
+            let reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+            if (reg.test(value)) {
+                callback()
+            } else {
+                callback(new Error('请输入正确的邮箱地址!'))
+            }
+        };
         return {
             // userInfo: this.$store.state.userInfo,
             // uploadInfo:this.$store.state.uploadInfo,
@@ -137,6 +169,13 @@ export default {
                 newPass: '',
                 checkPass: ''
             },
+            infoForm: {
+                username: this.$store.state.userInfo.username,
+                email: '',
+                phone: ''
+            },
+            username: this.$store.state.userInfo.username,
+            infoDialog: false,
             pwdDialog: false,
             checkRules: {
                 oldPass: [{
@@ -155,6 +194,16 @@ export default {
                     validator: validatePass,
                     trigger: 'blur'
                 }]
+            },
+            infoRules: {
+                email: [{
+                    validator: checkEmail,
+                    trigger: 'blur'
+                }],
+                phone: [{
+                    validator: phoneCheck,
+                    trigger: 'blur'
+                }]
             }
         }
     },
@@ -165,7 +214,10 @@ export default {
         changePwd() {
             this.pwdDialog = true;
         },
-        submitForm(formNameRef) {
+        changeInfo() {
+            this.infoDialog = true;
+        },
+        submitPwdForm(formNameRef) {
             this.$refs[formNameRef].validate(valid => {
                 if (valid) {
                     let encryptedSent = code.encryptFunc(this.pwdForm.newPass)
@@ -189,6 +241,32 @@ export default {
                 }
             })
             // this.pwdDialog = false;
+        },
+        submitInfoForm(formNameRef) {
+            this.$refs[formNameRef].validate(valid => {
+                if (valid) {
+                    this.$http.post('/api/edit/changeInfo', this.infoForm).then(res => {
+                        if (res.data.status === 200) {
+                            this.$message.success('修改信息成功')
+                            this.$store.dispatch('asyncGetUserInfo', this.username)
+                            this.infoDialog = false
+                        } else {
+                            this.$message.error('修改信息失败')
+                        }
+                    })
+                } else {
+                    this.$message.error('修改资料失败')
+                    return false
+                }
+            })
+        },
+        handleClose() {
+            Object.keys(this.infoForm).forEach(key => {
+                    if (key != 'username') {
+                        this.infoForm[key] = ''
+                    }
+                }
+            );
         }
     },
     computed: {

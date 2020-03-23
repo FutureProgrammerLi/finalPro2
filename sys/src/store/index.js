@@ -21,9 +21,21 @@ export default new Vuex.Store({
     },
     getUploadInfo(state,uploadInfo){
       state.uploadInfo = uploadInfo[0]
+     },
+    overwriteInfo(state,data){
+       state.userInfo = Object.assign(state.userInfo,data)
+      //  console.log(state.userInfo)
      }
   },
   actions: {
+    asyncGetUserInfo(context,username){
+     axios.get('/api/users/query',{params:{
+       username:username
+     }}).then(res=>{
+      //  console.log(res.data[0])
+      context.commit('overwriteInfo',res.data[0])
+     })
+    },
     asyncGetList(context,roleid){
       if(roleid != undefined){     //不判断会发送两次,有一次是undefined
         // console.log(roleid)

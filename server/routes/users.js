@@ -9,4 +9,6 @@ router.post('/regis',userService.signup)
 
 router.post('/checkIfExist',userService.check)
 
+router.get('/query',userService.query)
+
 module.exports = router;

@@ -6,7 +6,7 @@
         </div>
         <div class="box">
             <Login v-if="isActive" />
-            <Regis v-else @toggleChild="toggle2" />
+            <Regis v-else @toggleChild="toggle1" />
         </div>
     </div>
 

@@ -35,6 +35,7 @@ connection.query(querysql,(err,querydata)=>{
 
 }
 
+//注册功能
 exports.signup = function(req,res){
 let {username,password,email,phone} = req.body
 const sql1 = `insert into userlist(username , password , email , phone) values('${username}', '${password}' , '${email}' ,'${phone}');`
@@ -47,6 +48,7 @@ connection.query(sql1 , sql2,  (err,data)=>{
 })
 }
 
+//检查注册用户名是否已经存在
 exports.check = function(req,res){
     // console.log(Object.keys(req.body))    //返回个数组
     let username = Object.keys(req.body)[0]
@@ -65,3 +67,17 @@ exports.check = function(req,res){
         }
     })
 }
+
+//修改信息后更新视图,获取最新的资料
+exports.query = function(req,res){
+    // console.log(req.query)
+    let {username} = req.query
+    const sql = `select * from userlist where username='${username}'`
+    connection.query(sql,(err,data)=>{
+        if(err){
+            res.send(err)
+        }
+        res.send(data)
+    })
+}
+
