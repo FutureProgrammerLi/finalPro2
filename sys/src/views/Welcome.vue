@@ -91,6 +91,7 @@ div,
 .el-main{
     overflow: hidden;
     background-color: rgb(187, 247, 255);
+    height:100%;
 }
 
 body>.el-container {
