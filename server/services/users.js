@@ -81,3 +81,13 @@ exports.query = function(req,res){
     })
 }
 
+exports.updateRoleList = function(req,res){
+    const sql = `update rolelist as A INNER JOIN (select roleid,count(*) as total from userlist group by roleid) as B on A.roleid = B.roleid set A.numbers = B.total;`
+    connection.query(sql,(err,data)=>{
+        if(err){
+            res.send('更新统计数据失败')
+        }
+        res.send({status:200,msg:'更新数据成功'})
+    })
+}
+

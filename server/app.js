@@ -39,7 +39,7 @@ app.all('/api/*', function(req, res, next) {
 
 //请求url除了/login(/regis,还没写)之外的,都要验证token
 app.use(function (req,res,next){
-  if(req.url != '/users/login' && req.url !='/users/regis' && req.url !='/users/checkIfExist'){
+  if(req.url != '/users/login' && req.url !='/users/regis' && req.url !='/users/checkIfExist'&& req.url!='/users/updateRoleList' ){
     let token = req.headers.authorization
     let jwt = new JwtUtil(token)
     let result = jwt.verifyToken()  //return了res
@@ -47,7 +47,8 @@ app.use(function (req,res,next){
     // console.log('1')
     if(result == 'err'){
       // console.log('2')
-      res.send({"status":"403","msg":"登录已过期,请重新登录"})
+      // console.log(result)
+      res.send({"status":"403","msg":"登录已过期或无权查看该页面"})
     }else{
       // console.log('3')
       next()

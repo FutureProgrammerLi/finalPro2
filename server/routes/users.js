@@ -11,4 +11,7 @@ router.post('/checkIfExist',userService.check)
 
 router.get('/query',userService.query)
 
+router.put('/updateRoleList',userService.updateRoleList)
+
+
 module.exports = router;

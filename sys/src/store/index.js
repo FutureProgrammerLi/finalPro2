@@ -49,6 +49,11 @@ export default new Vuex.Store({
         axios.get(`/api/getUploadInfo/${username}`).then(res=>{
           context.commit('getUploadInfo',res.data)
         })
+      },
+      asynUpdateRoleList(){
+        axios.put('/api/users/updateRoleList').then(res=>{
+          console.log(res)
+        })
       }
   },
   modules: {

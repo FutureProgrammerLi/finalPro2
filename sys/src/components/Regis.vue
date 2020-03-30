@@ -147,6 +147,7 @@ export default {
                     }).then(res => {
                         // console.log(res)
                         if (res.data.affectedRows === 1) { //判断依据好吗?
+                            this.$store.dispatch('asynUpdateRoleList')
                             this.$message.success('注册成功')
                             this.$emit('toggleChild')
                             //怎么改变isActive?
