@@ -48,24 +48,30 @@ exports.upload = function(req,res,next){
 }
 
 exports.fileInfo = function(req,res,next){
-console.log(req.body)
-let username = req.body.username
+let {username,kind ,title} = req.body
 let infoPath = path.join(__dirname,`../uploads`) +`/${username}` + `/info/`
-console.log(infoPath)
+// console.log(infoPath)
 if(!fs.existsSync(infoPath)){
   fs.mkdirSync(infoPath)
 }
+
 let time = sd.format(new Date(),'YYYYMMDDHHmmss')
 let random = parseInt(Math.random() * 89999 +10000)
-let fileName = `${time}${random}.json`
+let fileName = `${time}${random}${kind}.json`
 let combined = `${infoPath}/${fileName}`
+let relativePath = `/uploads/${username}/info/${fileName}`
 let info = JSON.stringify(req.body)
 fs.writeFile(combined,info,(err)=>{
   if(err){
     res.send({status:400,msg:"信息文件写入失败"})
   }
   res.send({status:201,msg:"信息文件写入成功"})
-})     //无回调,同步的原因
-
+})    
+const sql = `insert into infopath(username, path , type ,title) values('${username}','${relativePath}' , '${kind}' ,'${title}');`
+connection.query(sql,(err,data)=>{       //插入失败了怎么办?
+  if(err){
+   throw err
+  }
+})
 }
 

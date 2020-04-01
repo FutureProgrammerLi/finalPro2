@@ -6,4 +6,5 @@ router.put('/posts',fileService.upload)
 
 router.put('/fileInfo',fileService.fileInfo)
 
+
 module.exports = router;

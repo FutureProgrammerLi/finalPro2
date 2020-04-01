@@ -5,41 +5,9 @@
         <div slot="header" class='title'>
             <span>稿件信息</span>
         </div>
-        <el-form ref="contentFormRef" :model="contentForm" label-width="100px" class="contentForm" :rules="rules">
-            <el-form-item label="中文标题:" prop="title">
-                <el-input type="text" v-model="contentForm.title" style="width:70%" placeholder="请输入不多于15字的中文标题"></el-input>
-            </el-form-item>
-            <el-form-item label="中文摘要:" prop="summary">
-                <el-input type="textarea" v-model="contentForm.summary" :rows="4" placeholder="请输入不多于30字的中文摘要"></el-input>
-            </el-form-item>
-            <el-form-item label="英文摘要:" prop="summaryInEnglish">
-                <el-input type="textarea" v-model="contentForm.summaryInEnglish" :rows="4" placeholder="请输入不多于50字的英文摘要"></el-input>
-            </el-form-item>
-            <el-form-item label="正文:" class="last" prop="content">
-                <el-input type="textarea" v-model="contentForm.content" :rows="7" placeholder="请输入正文部分,建议不多于2000字或直接上传文件"></el-input>
-            </el-form-item>
-        </el-form>
+        <ContentForm @getContentRef="pushContentRef"/>
         <div class='title'>作者信息</div>
-        <el-form ref="infoFormRef" :model="infoForm" label-width="100px" :inline="true" style="margin-top:15px;" :rules="rules">
-            <el-form-item label="作者姓名:" prop="name">
-                <el-input type="text" v-model="infoForm.name" placeholder="请输入您的姓名"></el-input>
-            </el-form-item>
-            <el-form-item label="性别" prop="gender">
-                <el-radio-group v-model="infoForm.gender">
-                    <el-radio label="男"></el-radio>
-                    <el-radio label="女"></el-radio>
-                </el-radio-group>
-            </el-form-item><br>
-            <el-form-item label="电子邮箱:" prop="email">
-                <el-input v-model="infoForm.email" maxlength="11" placeholder="请输入您的电子邮箱"></el-input>
-            </el-form-item>
-            <el-form-item label="联系电话:" prop="phone">
-                <el-input v-model="infoForm.phone" maxlength="11" placeholder="请输入您的联系电话"></el-input>
-            </el-form-item><br>
-            <el-form-item label="联系地址:" prop="address">
-                <el-input type="textarea" v-model="infoForm.address" autosize style="width:100%;" placeholder="请输入您的联系地址"></el-input>
-            </el-form-item>
-        </el-form>
+        <InfoForm @getInfoRef="pushInfoRef"/>
         <div class="first title"> 上传文件</div>
         <div id="box" style="margin-top:15px;">
             <el-upload class="upload-demo" ref="uploadRef" action="/api/posts" accept=".doc,.docx,.txt" :data="myData" :limit="1" :headers="myHeader" :on-exceed="handleExceed" :on-change="fileCheck" :file-list="fileList" :http-request="overwriteSubmit" :auto-upload="false">
@@ -48,124 +16,32 @@
             </el-upload>
         </div>
         <div class="btn">
-            <el-button type="primary" @click="submit($event)">投稿</el-button>
+            <el-button type="primary" round @click="submit($event)">投稿</el-button>
+            <el-button type="info" round @click="toDraft">设为草稿</el-button>
         </div>
     </el-card>
 </div>
 </template>
 
 <script>
+import ContentForm from '../components/forms/ContentForm'
+import InfoForm from '../components/forms/InfoForm'
 export default {
     name: "Post",
+    components: {
+        ContentForm,
+        InfoForm
+    },
     data() {
-        var nameCheck = (value, callback) => {
-            let nameReg = /^[\u4e00-\u9fa5]{2,6}$/
-            if (nameReg.test(value)) {
-                callback()
-            } else {
-                callback(new Error('请输入正确的姓名!'))
-            }
-        };
-        var phoneCheck = (value, callback) => {
-            if (value === '') {
-                callback(new Error('请输入手机号码'))
-            } else {
-                const regPhone = /^1[3456789]\d{9}$/
-                if (regPhone.test(value)) {
-                    callback()
-                } else {
-                    callback(new Error('请输入正确的手机号码!'))
-                }
-            }
-        };
-        var mailCheck = (value, callback) => {
-            let reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
-            if (reg.test(value)) {
-                callback()
-            } else {
-                callback(new Error('请输入正确的邮箱地址!'))
-            }
-        };
         return {
-            contentForm: {
-                title: '',
-                summary: '',
-                summaryInEnglish: '',
-                content: ''
-            },
-            infoForm: {
-                name: '',
-                gender: '',
-                email: '',
-                phone: '',
-                address: ''
-            },
             fileList: [],
             username: this.$store.state.userInfo.username,
-            rules: {
-                title: [{
-                    required: true,
-                    message: '请输入标题',
-                    trigger: 'blur'
-                }],
-                summary: [{
-                    required: true,
-                    message: '请输入中文摘要',
-                    trigger: 'blur'
-                }],
-                summaryInEnglish: [{
-                    required: true,
-                    message: '请输入英文摘要',
-                    trigger: 'blur'
-                }],
-                content: [{
-                    required: true,
-                    message: '请输入正文',
-                    trigger: 'blur'
-                }],
-                name: [{
-                        required: true,
-                        message: '请输入姓名',
-                        trigger: 'blur'
-                    },
-                    {
-                        validator: nameCheck,
-                        trigger: 'blur'
-                    }
-                ],
-
-                gender: [{
-                    required: true,
-                    message: '请选择性别',
-                    trigger: 'blur'
-                }],
-                email: [{
-                    required: true,
-                    message: '请输入电子邮箱',
-                    trigger: 'blur'
-                }, {
-                    validator: mailCheck,
-                    trigger: 'blur'
-                }],
-                phone: [{
-                    required: true,
-                    message: '请输入联系电话',
-                    trigger: 'blur'
-                }, {
-                    validator: phoneCheck,
-                    trigger: 'blur'
-                }],
-                address: [{
-                    required: true,
-                    message: '请输入联系地址',
-                    trigger: 'blur'
-                }]
-            }
+            content:''
         }
-
     },
     methods: {
         handleExceed(files, fileList) {
+            fileList[0].name = files[0].name //覆盖第一次上传的文件
             this.$message.warning(`每次仅限上传一个文件!`);
         },
         fileCheck(file, fileList) {
@@ -194,23 +70,96 @@ export default {
                     "username": this.username //用于操作数据库
                 }
             }
-            // this.$http.put('/api/filesOp/posts', formData,config).then(res => { //上传文件,及文件的处理接口
-            //     console.log(res)
-            // })
-            combinedObj = null;
-        },
-        submit() {
-            let combinedObj = Object.assign({}, this.contentForm, this.infoForm, this.fileList)
-            combinedObj.username = this.username
-            // if(combinedObj[0]!='undefined'){        //判断是否有上传文件
-            //     this.$refs.uploadRef.submit()       //有就触发overwriteSubmit
-            //     delete combinedObj[0] //为什么要删除?存储了文件信息和表单信息
-            // }
-            // console.log(combinedObj)
-            this.$http.put('/api/filesOp/fileInfo', combinedObj).then(res => { //处理表格信息
+            this.$http.put('/api/filesOp/posts', formData,config).then(res => { //上传文件,及文件的处理接口
                 console.log(res)
             })
             combinedObj = null;
+        },
+        submit() {
+            // console.log(this.$refs['contentFormRef'])
+            const p1 = new Promise(resolve => {
+                this.$refs['contentFormRef'].validate(valid => {
+                    if (valid) {
+                        resolve()
+                    }
+                })
+            })
+            const p2 = new Promise(resolve => {
+                this.$refs['infoFormRef'].validate(valid => {
+                    if (valid) {
+                        resolve()
+                    }
+                })
+            })
+            const p3 = new Promise(resolve => {
+                if (this.$refs['contentFormRef'].content == '' || this.fileList == []) { //相当于ContentForm里面的this.contentForm.content
+                    this.$message.warning('请输入稿件正文信息或上传稿件文件')
+                    let contentfocus = document.getElementById('contentfocus')
+                    contentfocus.focus()
+                } else {
+                    resolve()
+                }
+            })
+            Promise.all([p1, p2, p3]).then(() => {
+                // console.log('表单验证测试')
+                let combinedObj = Object.assign({}, this.contentForm, this.infoForm, this.fileList)
+                combinedObj.username = this.username
+                combinedObj.kind = 'post'
+                if (combinedObj[0] != 'undefined') { //判断是否有上传文件
+                    this.$refs.uploadRef.submit() //有就触发overwriteSubmit
+                    delete combinedObj[0] //为什么要删除?存储了文件信息和表单信息
+                }
+                // console.log(combinedObj)
+                this.$http.put('/api/filesOp/fileInfo', combinedObj).then(res => { //处理表格信息
+                    if (res.data.status === 400) {
+                        this.$message.error('投稿失败')
+                    } else if (res.data.status === 201) {
+                        this.$message.success('投稿成功')
+                        this.$refs['contentFormRef'].resetFields()
+                        this.$refs['infoFormRef'].resetFields()
+                        this.fileList = []
+                    } else {
+                        this.$message.error('未知错误')
+                    }
+                })
+                combinedObj = null;
+            })
+        },
+        toDraft() {
+            this.$refs['contentFormRef'].validate(valid => {
+                if (!valid) {
+                    this.$message.warning('请至少输入中文标题!')
+                    let input = document.getElementById('inputfocus')
+                    input.focus()
+                } else {
+                    let draftObj = Object.assign({}, this.contentForm, this.infoForm)
+                    draftObj.username = this.username
+                    draftObj.kind = 'draft'
+                    if (draftObj.title === '') {
+                        this.$message.warning('请至少输入标题!')
+                    } else {
+                        this.$http.put('/api/filesOp/fileInfo', draftObj).then(res => {
+                            if (res.data.status === 400) {
+                                this.$message.error('操作失败')
+                            } else if (res.data.status === 201) {
+                                this.$message.success('已放入草稿箱')
+                                this.$refs['contentFormRef'].resetFields()
+                                this.$refs['infoFormRef'].resetFields()
+                                this.fileList = []
+                            } else {
+                                this.$message.error('未知错误')
+                            }
+                        })
+                    }
+                }
+            })
+        },
+        pushContentRef(ref){
+        this.$refs['contentFormRef'] = ref
+        // this.content = content
+        },
+        pushInfoRef(ref){
+            this.$refs['infoFormRef'] = ref
         }
     },
     computed: {

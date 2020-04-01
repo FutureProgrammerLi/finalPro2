@@ -10,6 +10,7 @@ export default new Vuex.Store({
   state: localStorage.getItem("state") ? JSON.parse(localStorage.getItem("state")):{
     userInfo:'',
     menuList:[],
+    draftList:[],
     uploadInfo:''
   },
   mutations: {
@@ -21,6 +22,9 @@ export default new Vuex.Store({
     },
     getUploadInfo(state,uploadInfo){
       state.uploadInfo = uploadInfo[0]
+     },
+    getDraftList(state,draftList){
+       state.draftList = draftList
      },
     overwriteInfo(state,data){
        state.userInfo = Object.assign(state.userInfo,data)
@@ -53,6 +57,13 @@ export default new Vuex.Store({
       asynUpdateRoleList(){
         axios.put('/api/users/updateRoleList').then(res=>{
           console.log(res)
+        })
+      },
+      asyncGetDraftList(context,username){
+        axios.get(`/api/draft/draftlist`,{params:{
+          username:username
+        }}).then(res=>{
+          context.commit('getDraftList',res.data)
         })
       }
   },

@@ -36,6 +36,11 @@ const routes = [
         component:()=>import('../views/Draft.vue')
       },
       {
+        path:'/editDraft',
+        name:'EditDraft',
+        component:()=>import('../views/EditDraft.vue')
+      },
+      {
         path:'/help',
         name:'Help',
         component:()=>import('../views/Help.vue')
