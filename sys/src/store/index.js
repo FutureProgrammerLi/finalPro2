@@ -11,6 +11,7 @@ export default new Vuex.Store({
     userInfo:'',
     menuList:[],
     draftList:[],
+    draftContentList:'',
     uploadInfo:''
   },
   mutations: {
@@ -26,7 +27,10 @@ export default new Vuex.Store({
     getDraftList(state,draftList){
        state.draftList = draftList
      },
-    overwriteInfo(state,data){
+    draftContent(state,data){
+      state.draftContentList = data
+    },
+    overwriteInfo(state,data){  
        state.userInfo = Object.assign(state.userInfo,data)
       //  console.log(state.userInfo)
      }
@@ -63,7 +67,15 @@ export default new Vuex.Store({
         axios.get(`/api/draft/draftlist`,{params:{
           username:username
         }}).then(res=>{
+          // console.log(res.data)
           context.commit('getDraftList',res.data)
+        })
+      },
+      asyncGetContentByTitle({commit},paramsObj){
+        // console.log(paramsObj)
+        axios.get(`/api/draft/getContent/${paramsObj.username}/${paramsObj.title}`).then(res=>{
+          commit('draftContent',res.data)
+          // console.log(res.data)
         })
       }
   },

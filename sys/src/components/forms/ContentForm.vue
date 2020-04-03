@@ -40,9 +40,6 @@ export default {
         test() {
             console.log(this.$refs['contentFormRef'])
         }
-    },
-    mounted(){
-        this.$emit('getContentRef',this.$refs['contentFormRef'])
     }
 }
 </script>

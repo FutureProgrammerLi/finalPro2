@@ -100,9 +100,6 @@ export default {
                 }]
             }
         }
-    },
-    mounted(){
-        this.$emit('getInfoRef',this.$refs['infoFormRef'])
     }
 }
 </script>
