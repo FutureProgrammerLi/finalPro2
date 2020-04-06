@@ -1,9 +1,8 @@
 <template>
+<div id="box">
+    <el-button type="primary" @click="createDraft">新建草稿</el-button>
 <el-table :data="draftList" stripe border style="width: 100%">
     <el-table-column prop="title" label="稿件标题" width="300">
-        <template>
-            <!-- <el-button type="text">这里必须小于等于15个字这里够15个字了吗</el-button> -->
-        </template>
     </el-table-column>
     <el-table-column prop="date" label="上传日期" align="center">
     </el-table-column>
@@ -11,11 +10,10 @@
         <template slot-scope="scope">
             <el-button type="primary" size="mini" @click="editDraft(scope.row)">修改</el-button>
             <el-button size="mini" type="danger" @click="test(scope.row)">删除</el-button>
-            <!-- <el-button type="text" @click="test(scope.row)">修改</el-button>
-      <el-button type="text">删除</el-button> -->
         </template>
     </el-table-column>
 </el-table>
+</div>
 </template>
 
 <script>
@@ -30,7 +28,7 @@ export default {
     },
     methods: {
         test(){
-          console.log(this.$store.state.draftList)
+          console.log(typeof this.$store.state.draftList)
         },
         editDraft(content) {
             // console.log(content)
@@ -40,6 +38,9 @@ export default {
                     "info": content
                 }
             })
+        },
+        createDraft(){
+            this.$router.push('/editDraft')
         }
     },
     computed: {
@@ -50,3 +51,17 @@ export default {
     }
 }
 </script>
+<style scoped>
+#box{
+    margin:0;
+    padding:0;
+    height:100%;
+    overflow:hidden;
+}
+.el-table{
+    margin:0;
+    padding:0;
+    height:75vh;
+    overflow:auto;
+}
+</style>

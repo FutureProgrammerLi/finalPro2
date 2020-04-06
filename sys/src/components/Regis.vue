@@ -1,7 +1,6 @@
 <template>
 <div>
     <el-form :model="regisForm" ref="regisFormRef" :rules="checkRules" label-width="100px" class="demo-ruleForm">
-        <!-- -->
         <el-form-item label="账号:" prop="username">
             <el-input type="text" v-model="regisForm.username" auto-complete="off"></el-input>
         </el-form-item>
@@ -169,7 +168,6 @@ export default {
     border: none;
     outline: none;
     margin: 2.5rem 0 0;
-    /*height: 3rem; */
     border-radius: 3rem;
     background: linear-gradient(90deg, rgb(91, 220, 243), rgb(145, 245, 240));
     /* 181.154.254    245.189.253 */
@@ -187,21 +185,4 @@ export default {
     color: white;
 }
 
-/* .el-input{
-    margin:1rem 0;
-    position: relative;
-}
-.el-input{
-    content:'text';
-    position: absolute;
-    left:0;
-    top:-20%;
-    font-size: 1.4rem;
-    color:aqua;
-    transition: .3s;
-}
-.el-form-item::after{
-    top:-70%;
-    font-size: 1rem;
-} */
 </style>

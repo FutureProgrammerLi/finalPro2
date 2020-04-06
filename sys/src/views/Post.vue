@@ -63,9 +63,11 @@ export default {
             })
             Promise.all([p1, p2, p3]).then(() => {
                 // console.log('表单验证测试')
-                let combinedObj = Object.assign({}, this.$refs.contentForm.$refs['contentFormRef'].model, this.$refs.infoForm.$refs['infoFormRef'].model, this.fileList)
+                let combinedObj = Object.assign({}, this.$refs.contentForm.$refs['contentFormRef'].model, this.$refs.infoForm.$refs['infoFormRef'].model, this.$refs.fileupload.fileList)
                 combinedObj.username = this.username
                 combinedObj.kind = 'post'
+                combinedObj.draftToPost = false
+                console.log(combinedObj)
                 if (combinedObj[0] != 'undefined') { //判断是否有上传文件
                     this.$refs.fileupload.$refs.uploadRef.submit() //有就触发overwriteSubmit
                     delete combinedObj[0] //为什么要删除?存储了文件信息和表单信息
@@ -77,8 +79,9 @@ export default {
                     } else if (res.data.status === 201) {
                         this.$message.success('投稿成功')
                         this.$refs.contentForm.$refs['contentFormRef'].resetFields()
-                        this.$.refs.infoForm.$refs['infoFormRef'].resetFields()
+                        this.$refs.infoForm.$refs['infoFormRef'].resetFields()
                         this.$refs.fileupload.fileList = []
+                        this.$router.push('/info')
                     } else {
                         this.$message.error('未知错误')
                     }

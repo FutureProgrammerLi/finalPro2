@@ -1,5 +1,5 @@
 <template>
-<div>
+<div id="top" style="height:100%;overflow:auto;">
     <!-- 信息卡片 -->
     <el-card shadow="hover" style="width:100%;">
         <div slot="header">
@@ -49,6 +49,26 @@
                 </el-card>
             </el-col>
         </el-row>
+    </el-card>
+
+    <!-- 投稿详情卡片 -->
+    <el-card shadow="hover" style="margin-top:10px;" class="postinfo">
+        <div slot="header" >
+            投稿详情:
+        </div>
+        <el-table :data="postList" stripe border style="width: 100%;overflow:hidden;" >
+            <el-table-column prop="title" label="稿件标题" width="300">
+            </el-table-column>
+            <el-table-column prop="date" label="上传日期" align="center">
+            </el-table-column>
+            <el-table-column prop="state" label="状态" align="right">
+                <template slot-scope="scope">
+                    <el-tag type="success" v-if="scope.row.state == 'passed'">通过审核</el-tag>
+                    <el-tag type="warning" v-if="scope.row.state == 'todo'">正在审核</el-tag>
+                    <el-tag type="danger" v-if="scope.row.state == 'unpassed'">审核未通过</el-tag>
+                </template>
+            </el-table-column>
+        </el-table>
     </el-card>
 
     <!-- 修改密码的弹窗 -->
@@ -262,24 +282,49 @@ export default {
         },
         handleClose() {
             Object.keys(this.infoForm).forEach(key => {
-                    if (key != 'username') {
-                        this.infoForm[key] = ''
-                    }
+                if (key != 'username') {
+                    this.infoForm[key] = ''
                 }
-            );
+            });
         }
     },
     computed: {
-        ...mapState(['userInfo', 'uploadInfo'])
+        ...mapState(['userInfo', 'uploadInfo','postList'])
     },
     created() {
-        this.$store.dispatch('asyncGetUpload', this.$store.state.userInfo.username)
+        this.$store.dispatch('asyncGetUploadInfo', this.$store.state.userInfo.username)
+        this.$store.dispatch('asyncGetUploadDetails', this.$store.state.userInfo.username)
     }
 
 }
 </script>
 
 <style scoped>
+#top{
+    height:200%!important;
+    overflow:auto;
+}
+.el-card{
+    overflow:auto;
+}
+.el-card::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    /**/
+}
+
+.el-card::-webkit-scrollbar-track {
+    border-radius: 2px;
+}
+
+.el-card::-webkit-scrollbar-thumb {
+    background: #bfbfbf;
+    border-radius: 10px;
+}
+
+.el-card::-webkit-scrollbar-corner {
+    background: #bfbfbf;
+}
 .inner {
     text-align: center;
 }
@@ -298,5 +343,9 @@ export default {
 
 .unpassed:hover {
     background-color: rgb(248, 37, 37);
+}
+.postinfo{
+    height: 30vh;
+    overflow:auto;
 }
 </style>

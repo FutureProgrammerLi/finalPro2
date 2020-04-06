@@ -1,6 +1,5 @@
 <template>
 <div>
-
     <el-form :model="loginForm" status-icon ref="loginFormRef" :rules="loginFormRules" label-width="100px" class="demo-ruleForm">
         <el-form-item label="账号" prop="username">
             <el-input type="text" placeholder="请输入账号" prefix-icon="el-icon-user" v-model="loginForm.username" auto-complete="off" @keydown.enter.native="login"></el-input>
@@ -37,8 +36,8 @@ export default {
         }
         return {
             loginForm: {
-                username: 'zhanghao',
-                password: 'zheshimima123'
+                username: 'admin',  //zhanghao
+                password: 'asdf456'   //zheshimima123
             },
             loginFormRules: { //避免输入框开头有*
                 username: [{
@@ -68,7 +67,7 @@ export default {
                                 // console.log(res.data)
                                 this.$message.success('登录成功!')
                                 this.$store.commit('getUserInfo', res.data)
-                                this.$store.dispatch('asyncGetUpload',res.data.username)
+                                this.$store.dispatch('asyncGetUploadInfo',res.data.username)
                                 window.sessionStorage.setItem('token', res.data.token) //存储token到sessionStorage里面
                                 // console.log(this.$store.state.userInfo)
                                 this.$router.push('/info')
@@ -78,11 +77,6 @@ export default {
                                 this.$refs['passRef'].resetField()
                             }
                         }
-                        // if(res.data.status === 406){           
-                        // }
-                        // if (res.data.status === 200) {
-                        // }
-
                     })
                 }
             })
@@ -93,33 +87,6 @@ export default {
 </script>
 
 <style scoped>
-/* body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.el-form {
-    position:absolute;
-    top:50%;
-    right:50%;
-    transform: translate(-50%,-50%);
-    width: 30%;
-    margin: 3rem 0 0;
-} */
-
-/* .panel {
-    width: 30%;
-    margin: 10rem 0 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    display: flex;
-    justify-content: center;
-} */
-
 .el-form .el-button {
     display: inline;
     border: none;
@@ -134,12 +101,6 @@ export default {
     color: white;
 }
 
-/* .el-form-item{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform: translate(-50%,-50%)
-} */
 /deep/ .el-form-item__label{
     color:white;
 }

@@ -11,6 +11,9 @@ export default new Vuex.Store({
     userInfo:'',
     menuList:[],
     draftList:[],
+    postList:[],
+    allPostList:[],
+    postListTotal:0,
     draftContentList:'',
     uploadInfo:''
   },
@@ -24,8 +27,19 @@ export default new Vuex.Store({
     getUploadInfo(state,uploadInfo){
       state.uploadInfo = uploadInfo[0]
      },
+    getUploadDetails(state,postDetails){
+       state.postList = postDetails;
+    },
     getDraftList(state,draftList){
        state.draftList = draftList
+     },
+    getPostList(state,postList){
+       state.allPostList = postList
+       console.log(postList)
+     },
+    getListTotal(state,total){
+        state.postListTotal = total
+        console.log(total)
      },
     draftContent(state,data){
       state.draftContentList = data
@@ -52,11 +66,16 @@ export default new Vuex.Store({
         })
       }
       },
-      asyncGetUpload(context,username){
+      asyncGetUploadInfo(context,username){
         // console.log(username)
         axios.get(`/api/getUploadInfo/${username}`).then(res=>{
           context.commit('getUploadInfo',res.data)
         })
+      },
+      asyncGetUploadDetails(context,username){
+      axios.get(`/api/getUploadDetails/${username}`).then(res=>{
+        context.commit('getUploadDetails',res.data)
+      })
       },
       asynUpdateRoleList(){
         axios.put('/api/users/updateRoleList').then(res=>{
@@ -71,11 +90,20 @@ export default new Vuex.Store({
           context.commit('getDraftList',res.data)
         })
       },
-      asyncGetContentByTitle({commit},paramsObj){
+      asyncGetContentByTitle(context,paramsObj){
         // console.log(paramsObj)
-        axios.get(`/api/draft/getContent/${paramsObj.username}/${paramsObj.title}`).then(res=>{
-          commit('draftContent',res.data)
+        if(paramsObj.id){
+        axios.get(`/api/draft/getContent/${paramsObj.username}/${paramsObj.id}`).then(res=>{
+          context.commit('draftContent',res.data)
           // console.log(res.data)
+        })
+        }
+      },
+      asyncGetExamineList(context,roleid){
+        // console.log(roleid)
+        axios.get(`/api/examine/getExamineList/${roleid}`).then(res=>{
+          context.commit('getPostList',res.data.tableData)
+          context.commit('getListTotal',res.data.total)
         })
       }
   },

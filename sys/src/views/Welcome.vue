@@ -15,7 +15,7 @@
                         <span slot="title">导航二</span>
                     </el-menu-item> -->
                 </el-menu>
-                <el-button @click="test">test</el-button>
+                <!-- <el-button @click="test">test</el-button> -->
             </el-scrollbar>
         </el-aside>
   
@@ -66,7 +66,7 @@ export default {
             this.isCollapse?topic.style.display = "none":topic.style.display ='block'
         },
         test(){
-           console.log(this.$store.state.userInfo)
+           console.log(this.$store.state.draftList)
         }
     },
     created() {

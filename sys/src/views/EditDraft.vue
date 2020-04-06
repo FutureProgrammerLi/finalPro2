@@ -19,14 +19,16 @@
         <div slot="header" class="clearfix">
             <span>上传文件</span>
         </div>
-        <uploadFile ref='uploadFileRef' class="center" />
+        <uploadFile ref='fileupload' class="center" />
         <div class="btns">
             <el-button round type="primary" @click="post">投稿</el-button>
-            <el-button round type="primary" @click="save">保存</el-button><!--应覆盖原有内容 -->
-             <!-- 提示退出后不保存,退出确认 -->
+            <el-button round type="primary" @click="save">保存</el-button>
+            <!-- <el-button round type="primary" @click="test">保存</el-button> -->
+            <!--应覆盖原有内容 -->
+            <!-- 提示退出后不保存,退出确认 -->
         </div>
     </el-card>
-    <div v-show="false">{{getDraftList}}</div>  <!-- 没有这行填充不了内容? computed的问题? -->
+    <div v-show="false">{{getDraftList?getDraftList:''}}</div> <!-- 没有这行填充不了内容? computed的问题? -->
 
 </div>
 </template>
@@ -44,41 +46,94 @@ export default {
     },
     data() {
         return {
-
+          
         }
     },
     methods: {
         test() {
-            console.log(this.$store.state.draftContentList)
+            console.log(JSON.stringify(this.$route.params) == '{}')
         },
-        post(){
-        
+        post() {
+            // console.log(this.$refs.fileupload.$refs.uploadRef.submit)
+            // console.log(this.$refs.contentFormRef.contentForm)
+            const p1 = new Promise(resolve => {
+                this.$refs.contentFormRef.$refs['contentFormRef'].validate(valid => {
+                    if (valid) {
+                        resolve()
+                    }
+                })
+            })
+            const p2 = new Promise(resolve => {
+                this.$refs.infoFormRef.$refs['infoFormRef'].validate(valid => {
+                    if (valid) {
+                        resolve()
+                    }
+                })
+            })
+            const p3 = new Promise(resolve => {
+                if (this.$refs.contentFormRef.contentForm.content == '' && this.$refs.fileupload.fileList.length == 0) { //相当于ContentForm里面的this.contentForm.content
+                    this.$message.warning('请输入稿件正文信息或上传稿件文件')
+                    let contentfocus = document.getElementById('contentfocus') //能用吗?
+                    contentfocus.focus()
+                } else {
+                    resolve()
+                }
+            })
+            Promise.all([p1, p2, p3]).then(() => {
+                let combinedObj = Object.assign({}, this.$refs.contentFormRef.contentForm, this.$refs.infoFormRef.infoForm, this.$refs.fileupload.fileList)
+                combinedObj.username = this.$store.state.userInfo.username
+                combinedObj.kind = 'post'
+                combinedObj.draftToPost = true
+                if (JSON.stringify(this.$route.params) != '{}') {
+                    combinedObj.id = this.$route.params.info.id
+                }
+                if (combinedObj[0] != 'undefined') { //判断是否有上传文件
+                    this.$refs.fileupload.$refs.uploadRef.submit() //有就触发overwriteSubmit
+                    delete combinedObj[0] //为什么要删除?存储了文件信息和表单信息
+                }
+                // console.log(combinedObj)
+                this.$http.put('/api/filesOp/fileInfo', combinedObj).then(res => { //处理表格信息
+                    if (res.data.status === 400) {
+                        this.$message.error('投稿失败')
+                    } else if (res.data.status === 201) {
+                        this.$message.success('投稿成功')
+                        this.$refs.contentFormRef.$refs['contentFormRef'].resetFields()
+                        this.$refs.infoFormRef.$refs['infoFormRef'].resetFields()
+                        this.$refs.fileupload.fileList = []
+                    } else {
+                        this.$message.error('未知错误')
+                    }
+                })
+                combinedObj = null;
+            })
         },
-        save(){
-          let mixedObj = Object.assign({},this.$refs.contentFormRef.contentForm,this.$refs.infoFormRef.infoForm,this.$refs.uploadFileRef.fileList)
-          mixedObj.id = this.$route.params.info.id
-          this.$http.post(`/api/draft/saveDrafts`,mixedObj).then(res=>{
-              console.log(res)
-              if(res.data.status === 201){
-                  this.$message.success('保存成功')
-                  this.$router.push('/draft')
-              }else if(res.data.status === 400){
-                  this.$message.error('保存失败,数据库修改失败')
-              }else{
-                  this.$message.error('保存失败,未知错误')
-              }
-          })
+        save() {
+            let mixedObj = Object.assign({}, this.$refs.contentFormRef.contentForm, this.$refs.infoFormRef.infoForm, this.$refs.uploadFileRef.fileList)
+            if (JSON.stringify(this.$route.params) != '{}') {
+                mixedObj.id = this.$route.params.info.id
+            }
+            this.$http.post(`/api/draft/saveDrafts`, mixedObj).then(res => {
+                console.log(res)
+                if (res.data.status === 201) {
+                    this.$message.success('保存成功')
+                    this.$router.push('/draft')
+                } else if (res.data.status === 400) {
+                    this.$message.error('保存失败,数据库修改失败')
+                } else {
+                    this.$message.error('保存失败,未知错误')
+                }
+            })
         },
-        backward(){
-           this.$confirm('返回将放弃所有的更改,是否确定要后退?','确认返回',{
-               confirmButtonText:'保存并返回',
-               cancelButtonText:'不保存,直接返回'
-           }).then(()=>{
-                 this.save()      //保存并返回
-                 this.$router.push('/draft')
-           }).catch(()=>{
-                this.$router.push('/draft')   //不保存,直接返回
-           })
+        backward() {
+            this.$confirm('返回将放弃所有的更改,是否确定要后退?', '确认返回', {
+                confirmButtonText: '保存并返回',
+                cancelButtonText: '不保存,直接返回'
+            }).then(() => {
+                this.save() //保存并返回
+                this.$router.push('/draft')
+            }).catch(() => {
+                this.$router.push('/draft') //不保存,直接返回
+            })
         }
     },
     computed: {
@@ -88,15 +143,19 @@ export default {
     },
     created() {
         // console.log(this.$route.params.info.id)  //获取文章的id
-        let paramasObj = {
-            title: this.$route.params.info.title,
-            username: this.$store.state.userInfo.username
+        // console.log(this.$route.params)
+        if (JSON.stringify(this.$route.params) != '{}') {
+            let paramsObj = {
+                username: this.$store.state.userInfo.username
+            }
+            paramsObj.id = this.$route.params.info.id
+            this.$store.dispatch('asyncGetContentByTitle', paramsObj)
+        }else{
+            this.$store.state.draftContentList=[]
         }
-        this.$store.dispatch('asyncGetContentByTitle', paramasObj)
         // console.log(this.$store.state.draftContentList)
     },
     beforeUpdate() { //之前的每个周期,draftContentList都没有改变
-        // console.log(this.$store.state.draftContentList)
         Object.keys(this.$refs.contentFormRef.contentForm).forEach(i => {
             this.$refs.contentFormRef.contentForm[i] = this.getDraftList[i]
         })
