@@ -1,11 +1,10 @@
 const connection = require('../db/conn')
-function dealWithRoutes(id){
 
-}
 exports.test = function(req,res,next){
     res.send('test service')
 }
 
+//返回左侧列表
 exports.returnList = (req,res,next)=>{
     let roleid = req.params.roleid
     const sql = `select * from leftlist where permission>=${roleid};`
@@ -74,4 +73,28 @@ exports.returnUpload = (req,res,next)=>{
         data = JSON.parse(JSON.stringify(data))
         res.send(data)
     })
+}
+
+exports.returnDetails = (req,res,next)=>{
+// console.log(req.params)
+let {username} =req.params
+const sql = `select * from infopath where username='${username}' and type='post';`
+connection.query(sql,(err,data)=>{
+    if(err){
+        throw err
+    }
+    let sentData = []
+    let regFileName = /([^\\/]+)\.([^\\/]+)/
+    for(let i of data){
+        let obj = {}
+        obj.id = i.id;
+        obj.title = i.title;
+        obj.state = i.state;
+        regFileName.test(i.path)
+        let date = RegExp.$1.slice(0, 4) + '-' + RegExp.$1.slice(4, 6) + '-' + RegExp.$1.slice(6, 8)
+        obj.date = date
+        sentData.push(obj)
+    }
+    res.send(sentData)
+})
 }

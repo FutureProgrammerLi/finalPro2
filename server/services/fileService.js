@@ -48,14 +48,38 @@ exports.upload = function(req,res,next){
 }
 
 exports.fileInfo = function(req,res,next){
-  console.log(req.body)
-let {username,kind ,title} = req.body
+console.log(req.body)
+let {username,kind,title,draftToPost,id} = req.body
+if(draftToPost && id){                 //在草稿箱里面投稿,有id才找,无则创建信息文件,用于区分新建的和已有的草稿
+  //将文本信息的kind设置为post
+  const sql = `select path from infopath where id='${id}'`
+  connection.query(sql,(err,data)=>{
+    if(err){
+      throw err
+    }
+    let result = JSON.parse(JSON.stringify(data))[0]
+    let content = fs.readFileSync(path.join(__dirname,`../${result.path}`))
+    let overwrite = JSON.parse(content)
+    overwrite.kind = 'post'
+    // console.log(overwrite,typeof overwrite) //object
+    fs.writeFileSync(path.join(__dirname,`../${result.path}`),JSON.stringify(overwrite))
+  })
+  const query = `update infopath set type='post' where id='${id}'` //数据库的type改为post
+  connection.query(query,err=>{
+    if(err){
+      res.send(err)
+    }
+    res.send({status:201,msg:"投稿成功"})
+  })
+}else{
+  console.log(`${username}`)
 let infoPath = path.join(__dirname,`../uploads`) +`/${username}` + `/info/`
 // console.log(infoPath)
-if(!fs.existsSync(infoPath)){
-  fs.mkdirSync(infoPath)
+// console.log(fs.existsSync(infoPath))
+if(fs.existsSync(infoPath) == false){
+  fs.mkdirSync(`./uploads/${username}/`)         //要一层一层创建,不能直接创建两个目录
+  fs.mkdirSync(`./uploads/${username}/info/`)
 }
-
 let time = sd.format(new Date(),'YYYYMMDDHHmmss')  //是否可以封装?
 let random = parseInt(Math.random() * 89999 +10000)
 let fileName = `${time}${random}${kind}.json`
@@ -66,13 +90,10 @@ fs.writeFile(combined,info,(err)=>{
   if(err){
     res.send({status:400,msg:"信息文件写入失败"})
   }
+  const sql = `insert into infopath(username,title, path , type) values('${username}','${title}', '${relativePath}' , '${kind}');`
+  connection.query(sql,err2=>{if(err2)throw err2})
   res.send({status:201,msg:"信息文件写入成功"})
-})    
-const sql = `insert into infopath(username,title, path , type) values('${username}','${title}', '${relativePath}' , '${kind}');`
-connection.query(sql,(err,data)=>{       //插入失败了怎么办?
-  if(err){
-   throw err
-  }
-})
+})  
+}  
 }
 

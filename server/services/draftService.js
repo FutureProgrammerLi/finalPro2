@@ -33,21 +33,25 @@ exports.draftList = function (req, res, next) {
 }
 
 exports.getContent = function (req, res, next) {
-    // console.log(req.params)
+    console.log(req.params)
     let {
-        username,
-        title
+        id,
+        username
     } = req.params
-    const sql = `select path from infopath where username='${username}' and type='draft' and title='${title}'`
-    connection.query(sql, (err, data) => {
+    if(!id){
+        
+    }else{
+    const sql = `select path from infopath where username='${username}' and type='draft' and id='${id}'`
+    connection.query(sql, (err,data) => {
         if (err) {
             throw err
         }
-        // console.log(data[0].path)  //获得相对路径
+        // console.log(data[0].path,typeof data)  //获得相对路径
         let absolutePath = path.join(__dirname, `../${data[0].path}`) //拼成绝对路径
         let content = fs.readFileSync(absolutePath, 'utf-8')
-        res.end(content)
+        res.send(content)
     })
+}
 }
 
 exports.saveDrafts = function (req, res, next) {

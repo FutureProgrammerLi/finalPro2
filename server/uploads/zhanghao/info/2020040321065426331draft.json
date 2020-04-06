@@ -1,6 +1,6 @@
 {
-    "title": "haha",
-    "summary": "测试文件是否修改成功",
+    "title": "这是一份草稿",
+    "summary": "",
     "summaryInEnglish": "",
     "content": "",
     "name": "",
@@ -9,6 +9,5 @@
     "phone": "",
     "address": "",
     "username": "zhanghao",
-    "kind": "post",
-    "id": 22
+    "kind": "post"
 }
