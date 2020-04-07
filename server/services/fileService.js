@@ -5,7 +5,7 @@ const formidable = require('formidable')
 const sd = require('silly-datetime')
 
 exports.upload = function(req,res,next){
-    let username = req.headers.username
+    let {username,uid} = req.headers
     let storePath = path.join(__dirname,`../uploads`) +`/${username}`;
     if(!fs.existsSync(storePath)){        //判断是否为首次上传,不是则创建目录
          fs.mkdirSync(storePath)           //创建以用户名为目录的第一级目录
@@ -26,18 +26,20 @@ exports.upload = function(req,res,next){
       let random = parseInt(Math.random() * 89999 +10000)
       let extent = path.extname(files.file.name)
       let newPath = worksPath + time + random + extent
+      
       fs.rename(files.file.path,newPath,(err)=>{
         if(err){
           throw Error('改名失败')
         }
       })
       let relativePath = `/uploads/${username}/works/` + time + random + extent
-        const sql = `insert into uploadpath(username , uploadPath) values('${username}', '${relativePath}')`
+      const sql = `insert into uploadpath(username , uploadPath,uid) values('${username}', '${relativePath}','${uid}')`
         connection.query(sql,(err,data)=>{
           if(err){
             console.log(err)
             res.send({status:400,msg:'上传失败'})
           }
+          // console.log(data)
           if(data.affectedRows === 1){
             res.send({status:201,msg:'上传成功'})
           }else{
@@ -48,7 +50,7 @@ exports.upload = function(req,res,next){
 }
 
 exports.fileInfo = function(req,res,next){
-console.log(req.body)
+// console.log(req.body)
 let {username,kind,title,draftToPost,id} = req.body
 if(draftToPost && id){                 //在草稿箱里面投稿,有id才找,无则创建信息文件,用于区分新建的和已有的草稿
   //将文本信息的kind设置为post

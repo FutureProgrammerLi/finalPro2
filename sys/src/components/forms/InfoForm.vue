@@ -55,11 +55,11 @@ export default {
         };
         return {
             infoForm: {
-                name: '',
-                gender: '',
-                email: '',
-                phone: '',
-                address: ''
+                name: '哈哈哈',
+                gender: '男',
+                email: '123@qq.com',
+                phone: '13713213253',
+                address: '123213'
             },
             rules: {
                 name: [{

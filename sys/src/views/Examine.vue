@@ -43,8 +43,12 @@ export default {
     methods: {
         dealWithScope() {},
         handleEdit(index, row) {
-            console.log(this.$store.state.userInfo)
-            console.log(index, row);
+            // console.log(row.path)
+           this.$http.get(`/api/examine/getExamineContent`,{params:{
+               path:row.path
+           }}).then(res=>{
+               console.log(res)
+           })
         },
         handleDelete(index, row) {
             console.log(index, row);

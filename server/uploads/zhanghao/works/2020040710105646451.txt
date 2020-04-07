@@ -1,0 +1,536 @@
+<template>
+<div>
+
+    <el-form :model="loginForm" status-icon ref="loginFormRef" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="账号" prop="username">
+            <el-input type="text" v-model="loginForm.username" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+            <el-input type="password" v-model="loginForm.password" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button @click="login">Login</el-button>
+            <el-button @click="verify">Verify</el-button>
+        </el-form-item>
+    </el-form>
+
+</div>
+</template>
+
+<script>
+import code from '../services/encrypt.js'
+export default {
+    name: "Login",
+    data() {
+        return {
+            loginForm: {
+                username: '',
+                password: ''
+            }
+        }
+    },
+    methods: {
+        login() {
+            this.$http.post('/api/users/login', this.loginForm).then(res => {
+                //200登录成功,406密码错误,422账号不存在
+                // let input = code.encryptFunc(this.loginForm.password)
+                if (res.data.status === 422) {
+                    this.$message.error('账号不存在!')
+                } else {
+                    if (code.decryptFunc(res.data.password) == this.loginForm.password) {
+                        this.$message.success('登录成功!')
+                        window.sessionStorage.setItem('token', res.data.token) //存储token到sessionStorage里面
+                    } else {
+                        this.$message.error('密码错误,请重新输入!') //清空吗? validator好还是按登录才验证好?
+                    }
+                }
+
+                // if(res.data.status === 406){
+                //     
+                // }
+                // if (res.data.status === 200) {
+
+                // }
+
+            })
+        },
+        verify() {
+            this.$http.post('/api/test').then(res => {
+                console.log(res)
+            })
+        }
+    }
+}
+</script>
+
+<style scoped>
+/* body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.el-form {
+    position:absolute;
+    top:50%;
+    right:50%;
+    transform: translate(-50%,-50%);
+    width: 30%;
+    margin: 3rem 0 0;
+} */
+
+/* .panel {
+    width: 30%;
+    margin: 10rem 0 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+} */
+
+.el-form .el-button {
+    display: inline;
+    border: none;
+    outline: none;
+    margin: 2.5rem 0 0;
+    /* width: 50%;
+    height: 3rem; */
+    border-radius: 3rem;
+    background: linear-gradient(90deg, rgb(91, 220, 243), rgb(145, 245, 240));
+    /* 181.154.254    245.189.253 */
+    box-shadow: 0 0 8px rgb(140, 224, 230);
+    cursor: pointer;
+    color: white;
+}
+</style>
+
+<template>
+<div>
+    <el-form :model="regisForm" ref="regisFormRef" :rules="checkRules" label-width="100px" class="demo-ruleForm">
+        <!-- -->
+        <el-form-item label="账号" prop="username">
+            <el-input type="text" v-model="regisForm.username" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+            <el-input type="password" v-model="regisForm.password" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="ensure">
+            <el-input type="password" v-model="regisForm.ensure" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+            <el-input type="text" v-model="regisForm.email" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button @click="signup">Signup</el-button>
+        </el-form-item>
+    </el-form>
+</div>
+</template>
+
+<script>
+import code from '../services/encrypt.js'
+
+export default {
+    name: "Regis",
+    data() {
+        var validatePass = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请输入密码'));
+            } else {
+                if (this.regisForm.ensure !== '') {
+                    this.$refs.regisFormRef.validateField('ensure');
+                }
+                callback();
+            }
+        };
+        var validatePass2 = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请再次输入密码'));
+            } else if (value !== this.regisForm.password) {
+                callback(new Error('两次输入密码不一致!'));
+            } else {
+                callback();
+            }
+        };
+        var checkIfExist = (rule, value, callback) => {
+            this.$http.post('/api/users/checkIfExist', value).then(res => {
+                if (res.data.status === 201) { //有必要吗?
+                    callback()
+                } else if (res.data.status === 422) {
+                    callback(new Error('账号已存在!'))
+                } 
+            })
+        };
+
+        return {
+            regisForm: {
+                username: '',
+                password: '',
+                ensure: '', //表格校验时用
+                email: ''
+            },
+            checkRules: {
+                username: [{
+                    validator: checkIfExist,
+                    trigger: 'blur'
+                }],
+                password: [{
+                    validator: validatePass,
+                    trigger: 'blur'
+                }],
+                ensure: [{
+                    validator: validatePass2,
+                    trigger: 'blur'
+                }]
+            }
+        }
+    },
+    methods: {
+        signup() {
+            // console.log(this.regisForm.password)
+            // console.log(encrypted)
+            // let decrypted = code.decryptFunc(encrypted)
+            // console.log(decrypted)
+            // this.regisForm.password = encrypted //怪怪的
+            let encrypted = code.encryptFunc(this.regisForm.password)
+            this.$http.post('/api/users/regis', {
+                "username": this.regisForm.username,
+                "password": encrypted,
+                "email":this.regisForm.email
+            }).then(res => {
+                console.log(res)
+                if(res.data.affectedRows === 1){ //判断依据好吗?
+                    this.$message.success('注册成功')
+                    //怎么改变isActive?
+                }else{            //前端校验了数据后有什么原因注册失败?
+                    this.$message.error('注册失败')
+                }
+        })
+    }
+   }
+}
+</script>
+
+<style scoped>
+.el-form .el-button {
+    display: inline;
+    border: none;
+    outline: none;
+    margin: 2.5rem 0 0;
+    /* width: 50%;
+    height: 3rem; */
+    border-radius: 3rem;
+    background: linear-gradient(90deg, rgb(91, 220, 243), rgb(145, 245, 240));
+    /* 181.154.254    245.189.253 */
+    box-shadow: 0 0 8px rgb(140, 224, 230);
+    cursor: pointer;
+    color: white;
+}
+</style>
+
+"use strict";
+
+import Vue from 'vue';
+import axios from "axios";
+
+// Full config:  https://github.com/axios/axios#request-config
+// axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
+// axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
+let config = {
+  //baseURL: 'http://127.0.0.1:3000',
+  // timeout: 60 * 1000, // Timeout
+  //withCredentials: true // Check cross-site Access-Control
+};
+
+const _axios = axios.create(config);
+
+_axios.interceptors.request.use(
+  function(config) {
+    // Do something before request is sent
+    console.log('test interceptor')
+    return config;
+  },
+  function(error) {
+    // Do something with request error
+    return Promise.reject(error);
+  }
+);
+
+// Add a response interceptor
+_axios.interceptors.response.use(
+  function(response) {
+    // Do something with response data
+    return response;
+  },
+  function(error) {
+    // Do something with response error
+    return Promise.reject(error);
+  }
+);
+
+Plugin.install = function(Vue, options) {
+  Vue.axios = _axios;
+  window.axios = _axios;
+  Object.defineProperties(Vue.prototype, {
+    axios: {
+      get() {
+        return _axios;
+      }
+    },
+    $axios: {
+      get() {
+        return _axios;
+      }
+    },
+  });
+};
+
+Vue.use(Plugin)
+
+export default Plugin;
+
+const crypto = require('crypto')
+const key = "AA349B710F20CC17"     //MD
+
+
+function encryptFunc(msg) {
+    // if(typeof msg =='object'){
+    //     msg = crypto.enc.Utf8.parse(msg);    //转换成字符串 crypto-js才有
+    // }
+    // let encrypted = crypto.AES.encrypt(msg,key,{
+    //     mode:crypto.mode.CBC
+    // })
+    // return encrypted
+    if(typeof msg =='object'){
+        msg = JSON.stringify(msg)
+    }
+    const cipher = crypto.createCipher('aes-256-cbc', key);
+    var crypted = cipher.update(msg, 'utf8', 'hex');
+    crypted += cipher.final('hex');
+    return crypted;
+}
+
+function decryptFunc(encrypted){
+    // let decrypted = crypto.AES.decrypt(encrypted,key)
+    // return decrypted
+    const decipher = crypto.createDecipher('aes-256-cbc', key);
+    var decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+    }
+
+export default{
+    encryptFunc,
+    decryptFunc
+}
+
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+export default new Vuex.Store({
+  state: {
+  },
+  mutations: {
+  },
+  actions: {
+  },
+  modules: {
+  }
+})
+
+<template>
+<div>
+    <div class="container">
+        <div class="pannel">
+            <div class="span">
+                <el-button type='text' @click='toggle' :class="isActive?'active':''" style="color:#ccc;" :style="isActive?styleObj:''">Login</el-button>/ <el-button type='text' class='sign' @click='toggle' :class="!isActive?'active':''" style="color:#ccc;" :style="!isActive?styleObj:''">Sign Up</el-button>
+            </div>
+            <Login v-if="isActive" />
+            <Regis v-else />
+        </div>
+    </div>
+</div>
+</template>
+
+<script>
+import Login from '../components/Login'
+import Regis from '../components/Regis'
+
+export default {
+    name: 'Home',
+    components: {
+        Login,
+        Regis
+    },
+    data() {
+        return {
+            isActive: true,
+            styleObj:{
+              fontSize:'1.4rem',
+              color:'#409EFF'
+            }
+        }
+    },
+    methods: {
+        toggle() {
+            this.isActive = !this.isActive
+        }
+    }
+}
+</script>
+
+<style>
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    position: relative;
+    width: 70rem;
+}
+
+.panel {
+    width: 30%;
+    margin: 10rem 0 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.el-form {
+    width: 30rem;
+    margin: 3rem 0 0;
+}
+/* .span{
+  font-size: 1.4rem!important;
+  color:#ccc;
+} */
+
+</style>
+
+<template>
+  <div id="app">
+    <!-- <div id="nav">
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link>
+    </div> -->
+    <router-view/>
+  </div>
+</template>
+
+<script>
+export default {
+  
+}
+</script>
+
+<style>
+
+
+</style>
+
+import Vue from 'vue'
+import './plugins/axios'
+import App from './App.vue'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+import store from './store'
+import axios from 'axios'
+import router from './router'
+
+Vue.use(ElementUI)
+
+Vue.config.productionTip = false;
+Vue.prototype.$http = axios;
+axios.interceptors.request.use(config=>{        //必须返回config这个对象,plugins里的都无效了??
+  config.headers.Authorization = window.sessionStorage.getItem('token') //将token设置在请求头中
+  return config
+})
+
+new Vue({
+  store,
+  router,
+  render: h => h(App)
+}).$mount('#app')
+
+{
+  "name": "sys",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "core-js": "^3.6.4",
+    "crypto-js": "^4.0.0",
+    "element-ui": "^2.3.6",
+    "vue": "^2.6.11",
+    "vue-router": "^3.1.5",
+    "vuex": "^3.1.2"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.2.0",
+    "@vue/cli-plugin-eslint": "^4.2.0",
+    "@vue/cli-plugin-router": "^4.2.2",
+    "@vue/cli-service": "^4.2.0",
+    "axios": "^0.18.1",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.1.2",
+    "vue-cli-plugin-axios": "0.0.4",
+    "vue-cli-plugin-element-ui": "^1.1.4",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {
+      "generator-star-spacing": "off",
+      "no-tabs": "off",
+      "no-unused-vars": "off",
+      "no-console": "off",
+      "no-irregular-whitespace": "off",
+      "no-debugger": "off"
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
+}
+module.exports = {
+    devServer: {
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+          pathRewrite:{
+              '^/api':''
+          }
+        }
+      }
+    }
+  }

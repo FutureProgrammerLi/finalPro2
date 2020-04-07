@@ -45,9 +45,11 @@ export default {
             let config = { //设置了header所以不能放置其它参数?
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    "username": this.username //用于操作数据库
+                    "username": this.username, //用于操作数据库
+                    "uid":JSON.stringify(this.fileList[0].uid)
                 }
             }
+            // console.log(this.fileList[0].uid)
             this.$http.put('/api/filesOp/posts', formData, config).then(res => { //上传文件,及文件的处理接口
                 console.log(res)
             })

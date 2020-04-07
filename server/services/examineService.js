@@ -1,8 +1,9 @@
 const connection = require('../db/conn')
+const fs = require('fs')
+const path = require('path')
 
 exports.returnList = function(req,res,next){
 let {roleid} = req.params
-
 if(roleid < 2){     //判断身份
      const sql1 = `select * from infopath where type='post' and state='todo';`
      const sql2 = `select count(*) as total from infopath where type='post' and state='todo';`
@@ -37,4 +38,33 @@ if(roleid < 2){     //判断身份
 }else{
     res.send({status:403,msg:'没有权限!'})
 }
+}
+
+exports.returnContent = function(req,res,next){
+   // console.log(req.params,req.query,req.body) //params传过来的在req.query
+   let getPath = req.query.path   //infopath里面的path
+   // console.log(getPath)
+   let absPath = path.join(__dirname,`../${getPath}`)
+   // console.log(absPath)
+   let infoContent = fs.readFileSync(absPath,'utf-8')  //信息内容
+   infoContent = JSON.parse(infoContent)
+   // console.log(content)
+   if(infoContent[0]){       //有上传文件
+      const uid =infoContent[0].uid
+      const query = `select uploadPath from uploadpath where uid='${uid}'` //获取上传的文件在服务器的路径
+      connection.query(query,(err,data)=>{
+         if(err){
+            throw err
+         }
+         data = JSON.parse(JSON.stringify(data))
+         let relPath = data[0].uploadPath
+         let combined = path.join(__dirname,`../${relPath}`)
+         let fileContent = fs.readFileSync(combined,'utf-8')
+         let contentObj = Object.assign({},infoContent)  
+         contentObj.fileContent = fileContent
+         res.send(contentObj)    //信息和文件内容整合在一个对象
+      })
+   }else{
+   res.send(infoContent)  //只有信息内容
+   }    
 }

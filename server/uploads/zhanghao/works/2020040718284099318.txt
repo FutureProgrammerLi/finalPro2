@@ -1,0 +1,8 @@
+怎么实现跳转？
+怎么跳转的时候实现传参？
+router.get和href对应吗?
+render的为什么就是页面的名称? 为什么要带个空对象?
+form的action是addBook,render里面也是addBook
+router.get的路径和方法名是toAddBook
+express怎么使用模板引擎?
+form 的enctype
