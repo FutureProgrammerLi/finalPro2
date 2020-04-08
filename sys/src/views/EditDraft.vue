@@ -22,7 +22,7 @@
         <uploadFile ref='fileupload' class="center" />
         <div class="btns">
             <el-button round type="primary" @click="post">投稿</el-button>
-            <el-button round type="primary" @click="save">保存</el-button>
+            <el-button round type="primary" @click="toDraft">保存</el-button>
             <!-- <el-button round type="primary" @click="test">保存</el-button> -->
             <!--应覆盖原有内容 -->
             <!-- 提示退出后不保存,退出确认 -->
@@ -108,7 +108,7 @@ export default {
             })
         },
         save() {
-            let mixedObj = Object.assign({}, this.$refs.contentFormRef.contentForm, this.$refs.infoFormRef.infoForm, this.$refs.uploadFileRef.fileList)
+            let mixedObj = Object.assign({}, this.$refs.contentFormRef.contentForm, this.$refs.infoFormRef.infoForm)
             if (JSON.stringify(this.$route.params) != '{}') {
                 mixedObj.id = this.$route.params.info.id
             }
@@ -121,6 +121,36 @@ export default {
                     this.$message.error('保存失败,数据库修改失败')
                 } else {
                     this.$message.error('保存失败,未知错误')
+                }
+            })
+        },
+        toDraft() {
+            // console.log(this.$refs.infoFormRef.$refs['infoFormRef'].model)
+            this.$refs.contentFormRef.$refs['contentFormRef'].validate(valid => {
+                if (!valid) {
+                    this.$message.warning('请至少输入中文标题!')
+                    let input = document.getElementById('inputfocus')
+                    input.focus()
+                } else {
+                    let draftObj = Object.assign({}, this.$refs.contentFormRef.$refs['contentFormRef'].model, this.$refs.infoFormRef.$refs['infoFormRef'].model)
+                    draftObj.username = this.$store.state.userInfo.username
+                    draftObj.kind = 'draft'
+                    if (draftObj.title === '') {
+                        this.$message.warning('请至少输入标题!')
+                    } else {
+                        // console.log(draftObj)
+                        this.$http.put('/api/filesOp/fileInfo', draftObj).then(res => {
+                            if (res.data.status === 400) {
+                                this.$message.error('操作失败')
+                            } else if (res.data.status === 201) {
+                                this.$message.success('已放入草稿箱')
+                                this.$refs.contentFormRef.$refs['contentFormRef'].resetFields()
+                                this.$refs.infoFormRef.$refs['infoFormRef'].resetFields()
+                            } else {
+                                this.$message.error('未知错误')
+                            }
+                        })
+                    }
                 }
             })
         },

@@ -97,7 +97,7 @@ export default {
                     input.focus()
                 } else {
                     let draftObj = Object.assign({}, this.$refs.contentForm.$refs['contentFormRef'].model, this.$refs.infoForm.$refs['infoFormRef'].model)
-                    draftObj.username = this.username
+                    draftObj.username = this.$store.state.userInfo.username
                     draftObj.kind = 'draft'
                     if (draftObj.title === '') {
                         this.$message.warning('请至少输入标题!')
