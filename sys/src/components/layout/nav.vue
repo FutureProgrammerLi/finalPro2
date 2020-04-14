@@ -12,9 +12,10 @@
         <el-breadcrumb-item>活动详情</el-breadcrumb-item>
     </el-breadcrumb> -->
     <div id="info">
-        <span id="icon">
-            <el-badge :value="1" class="item">
+        <span id="icon" @click="toMsg">
+            <el-badge  :value="unreadMsgs" class="item">
                 <i class="el-icon-bell"></i>
+                <!-- <el-button @click="test" icon="el-icon-bell"></el-button> -->
             </el-badge>
         </span>
 
@@ -27,6 +28,7 @@
             </el-dropdown-menu>
         </el-dropdown>
         Hi,{{$store.state.userInfo.username}}!
+        <!-- <el-button @click="test">test</el-button> -->
     </div>
     <!-- breadcrumb -->
 
@@ -34,6 +36,9 @@
 </template>
 
 <script>
+import {
+    mapState, mapGetters
+} from 'vuex'
 export default {
     name: 'navi',
     data() {
@@ -48,11 +53,23 @@ export default {
         },
         goTo(path) {
             this.$router.push(path)
+        },
+        toMsg() {
+            if (this.$router.app._route.name != 'Message') {  //防止报错,Navigation Duplicated
+                this.$router.push('/message')
+            }
+        },
+        test() {
+            console.log(this.unreadMsgs)
+            console.log(this.comments)
         }
+    },
+    computed: {
+        ...mapState(['commentsNum','comments']),
+        ...mapGetters(['unreadMsgs'])
     },
     created() {
         this.$store.dispatch('asyncGetList')
-
     }
 }
 </script>
@@ -91,7 +108,8 @@ export default {
     justify-content: center;
     align-items: center;
 }
-.el-breadcrumb{
-  padding:10px;
+
+.el-breadcrumb {
+    padding: 10px;
 }
 </style>

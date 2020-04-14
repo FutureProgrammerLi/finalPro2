@@ -39,6 +39,7 @@ import navi from '../components/layout/nav'
 import myFooter from '../components/layout/myFooter'
 import obj from '../services/routes'
 export default {
+    name:'Welcome',
     components: {
         navi,
         myFooter
@@ -53,7 +54,9 @@ export default {
                 '我要帮助': 'el-icon-help',
                 '退出': 'el-icon-back',
                 '发布公告':'el-icon-mic',
-                '审稿':'el-icon-view'
+                '审稿':'el-icon-view',
+                '消息管理':'el-icon-message',
+                '好友聊天':'el-icon-chat-dot-round'
             },
             routeMenu:[],
             roleid:''
@@ -66,12 +69,29 @@ export default {
             this.isCollapse?topic.style.display = "none":topic.style.display ='block'
         },
         test(){
-           console.log(this.$store.state.draftList)
+           console.log(this.$store.state.comments,this.$store.state.commentsNum)
+        }
+    },
+    sockets: {
+        connect() {
+            console.log('连接成功')
+        },
+        progress() {
+            console.log('FiredByServer')
+            console.log('111')
+        },
+         receiveMsg(res) {
+            console.log(res)
         }
     },
     created() {
         this.$store.dispatch('asyncGetList',this.$store.state.userInfo.roleid)
+        this.$store.dispatch('getComment',this.$store.state.userInfo.username)
+    },
+    mounted(){
+        this.$socket.emit('regis',this.$store.state.userInfo.username)
     }
+    
     
 }
 </script>

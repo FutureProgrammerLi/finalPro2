@@ -14,6 +14,8 @@ export default new Vuex.Store({
     postList:[],
     allPostList:[],
     postListTotal:0,
+    comments:[],
+    commentsNum:0,
     draftContentList:'',
     uploadInfo:''
   },
@@ -35,14 +37,20 @@ export default new Vuex.Store({
      },
     getPostList(state,postList){
        state.allPostList = postList
-       console.log(postList)
+      //  console.log(postList)
      },
     getListTotal(state,total){
         state.postListTotal = total
-        console.log(total)
+        // console.log(total)
      },
     draftContent(state,data){
       state.draftContentList = data
+    },
+    getCommentsNum(state,num){
+     state.commentsNum = num
+    },
+    getComments(state,comments){
+      state.comments = comments
     },
     overwriteInfo(state,data){  
        state.userInfo = Object.assign(state.userInfo,data)
@@ -105,9 +113,45 @@ export default new Vuex.Store({
           context.commit('getPostList',res.data.tableData)
           context.commit('getListTotal',res.data.total)
         })
+      },
+      commentsInsert(context,obj){
+        axios.post('/api/examine/commentsInsert',obj).then(res=>{
+          if(res.data.status === 200){
+            console.log('Successfully Insert!')
+          }else{
+            console.log('Comment Failed!')
+          }
+        })
+      },
+      getComment(context,username){
+        axios.get(`/api/examine/getComment/${username}`).then(res=>{
+          if(res.status == 200){
+            context.commit('getCommentsNum',res.data.length)
+            context.commit('getComments',res.data)
+          }
+          // console.log(res)
+        })
       }
   },
   modules: {
+  },
+  getters:{
+    unreadMsgs(state){
+      return state.comments.filter(i=>i.done ==0).length
+    },
+    postNum(state){
+      return state.postList.length
+    },
+    passNum(state){
+      return state.postList.filter(i=>i.state=='passed').length
+    },
+    unpassNum(state){
+      return state.postList.filter(i=>i.state=='unpassed').length
+    },
+    todoNum(state){
+      return state.postList.filter(i=>i.state=='todo').length
+    },
+
   }
 })
 

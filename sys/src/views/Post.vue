@@ -161,9 +161,6 @@ export default {
     border-radius: 10px;
 }
 
-/* .el-card::-webkit-scrollbar-thumb:hover{
-  background: #bfbfbf;
-} */
 .el-card::-webkit-scrollbar-corner {
     background: #bfbfbf;
 }

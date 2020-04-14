@@ -4,6 +4,8 @@ import Home from '../views/Home.vue'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import store from '../store/index'
+import VueSocketio from 'vue-socket.io'
+
 
 
 
@@ -54,7 +56,23 @@ const routes = [
         path:'/announce',
         name:'Announce',
         component:()=>import('../views/Announce.vue')
+      },
+      {
+        path:'/editexamine',
+        name:'EditExamine',
+        component:()=>import('../views/EditExamine.vue')
+      },
+      {
+        path:'/chat',
+        name:'Chat',
+        component:()=>import('../views/Chat.vue')
+      },
+      {
+        path:'/message',
+        name:'Message',
+        component:()=>import('../views/Message.vue')
       }
+
     ]
   },
   
@@ -80,7 +98,6 @@ router.beforeEach((to,from,next)=>{     //简易判断是否带有token,没有�
 
 router.beforeEach((to,from,next)=>{    //退出登录
   if(to.path ==='/exit'){
-    // console.log(router)
     window.sessionStorage.clear()
     return next(' /')
   }

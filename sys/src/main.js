@@ -6,8 +6,21 @@ import 'element-ui/lib/theme-chalk/index.css'
 import store from './store'
 import axios from 'axios'
 import router from './router'
+import VueSocketio from 'vue-socket.io'
+import socketio from 'socket.io-client'
+
 
 Vue.use(ElementUI)
+Vue.use(new VueSocketio({
+  debug:true,
+  connection:'http://localhost:3001',
+  vuex:{
+    store,
+    actionPrefix: 'SOCKET_',
+    mutationPrefix: 'SOCKET_'
+    }
+}))
+
 
 Vue.config.productionTip = false;
 Vue.prototype.$http = axios;

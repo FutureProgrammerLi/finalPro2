@@ -5,7 +5,9 @@ const formidable = require('formidable')
 const sd = require('silly-datetime')
 
 exports.upload = function(req,res,next){
+    
     let {username,uid} = req.headers
+    console.log(username,uid)
     let storePath = path.join(__dirname,`../uploads`) +`/${username}`;
     if(!fs.existsSync(storePath)){        //判断是否为首次上传,不是则创建目录
          fs.mkdirSync(storePath)           //创建以用户名为目录的第一级目录
@@ -78,6 +80,7 @@ if(draftToPost && id){                 //在草稿箱里面投稿,有id才找,�
 let infoPath = path.join(__dirname,`../uploads`) +`/${username}` + `/info/`
 // console.log(infoPath)
 // console.log(fs.existsSync(infoPath))
+console.log(infoPath)
 if(fs.existsSync(infoPath) == false){
   fs.mkdirSync(`./uploads/${username}/`)         //要一层一层创建,不能直接创建两个目录
   fs.mkdirSync(`./uploads/${username}/info/`)
@@ -97,5 +100,26 @@ fs.writeFile(combined,info,(err)=>{
   res.send({status:201,msg:"信息文件写入成功"})
 })  
 }  
+}
+
+exports.sendFiles = function(req,res,next){
+  console.log(req.params)
+  let {uid} = req.params
+  const search = `select uploadPath from uploadpath where uid='${uid}';`
+  connection.query(search,(err,data)=>{
+    if(err){
+      throw err
+    }
+    data = JSON.parse(JSON.stringify(data))
+    let relPath = data[0].uploadPath
+    let absPath = path.join(__dirname,`../${relPath}`)
+    console.log(absPath)
+    res.sendFile(absPath,{
+      headers:{
+        "content-type":"blob"
+      }
+    }
+  )
+  })
 }
 

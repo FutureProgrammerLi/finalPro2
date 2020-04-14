@@ -54,7 +54,8 @@ exports.returnContent = function(req,res,next){
       const query = `select uploadPath from uploadpath where uid='${uid}'` //获取上传的文件在服务器的路径
       connection.query(query,(err,data)=>{
          if(err){
-            throw err
+            res.send({status:500,msg:'数据库操作失败'})
+            throw err         
          }
          data = JSON.parse(JSON.stringify(data))
          let relPath = data[0].uploadPath
@@ -62,9 +63,85 @@ exports.returnContent = function(req,res,next){
          let fileContent = fs.readFileSync(combined,'utf-8')
          let contentObj = Object.assign({},infoContent)  
          contentObj.fileContent = fileContent
-         res.send(contentObj)    //信息和文件内容整合在一个对象
+         res.status(200).send(contentObj)    //信息和文件内容整合在一个对象
       })
    }else{
    res.send(infoContent)  //只有信息内容
    }    
+}
+
+exports.changeState = function(req,res,next){
+   // console.log(req.params)
+   let {id,state} = req.params
+   const sql = `update infopath set state='${state}' where id='${id}';`
+   connection.query(sql,(err,data)=>{
+      if(err){
+         throw err
+      }
+      if(data.affectedRows === 1){
+         res.send({status:200,msg:'修改稿件状态成功'})
+      }else{
+         res.send({status:500,msg:'修改状态失败'})
+      }
+   })
+}
+
+exports.commentsInsert = function(req,res,next){
+   // console.log(req.body)
+   let {commentator,username,comment,infoid,title} = req.body
+   const sql = `insert into commenttable(commentator, username,comment,infoid,title) values('${commentator}' , '${username}', '${comment}' , '${infoid}','${title}');`
+   connection.query(sql , (err,data)=>{
+      if(err){
+         throw err
+      }
+      if(data.affectedRows === 1){
+         res.send({status:200,msg:'评论成功!'})
+      }else{
+         res.send({status:500,msg:'评论失败!'})
+      }
+   })
+}
+
+exports.returnComment = function(req,res,next){
+   // console.log(req.params)
+   let {username} =req.params
+   // const checkTotal = `select count(*) as total from commenttable where username='${username}';`
+   const all = `select * from commenttable where username='${username}';`
+   connection.query(all,(err,data)=>{
+      if(err){
+         throw err
+      }
+      res.send(data)
+   })
+   // connection.query()
+}
+
+exports.changeMsgState = function(req,res,next){
+   // console.log(req.params)
+   let {id,type} = req.params
+   if(type == 'read'){
+    const sql1 = `update commenttable set done='1' where id='${id}';`
+    connection.query(sql1,(err,data)=>{
+       if(err){
+          throw err
+       }
+       if(data.affectedRows === 1){
+          res.send({status:200,msg:'已设置为已读'})
+       }else{
+          res.send({status:500,msg:'未知错误1'})
+       }
+    })
+   }else if(type == 'delete'){
+   const sql2 = `delete from commenttable where id='${id}';`
+   connection.query(sql2,(err,data)=>{
+      if(err){
+         throw err
+      }
+      if(data.affectedRows === 1){
+         res.send({status:200,msg:'已删除信息'})
+      }else{
+         res.send({status:500,msg:'未知错误2'})
+      }
+   })
+   }
 }

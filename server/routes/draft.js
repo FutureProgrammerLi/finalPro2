@@ -7,4 +7,7 @@ router.get('/draftlist',draftService.draftList)
 router.get('/getContent/:username/:id',draftService.getContent)
 
 router.post('/saveDrafts',draftService.saveDrafts)
+
+router.delete('/deleteDrafts/:id',draftService.deleteDrafts)
+
 module.exports = router

@@ -78,7 +78,7 @@ exports.returnUpload = (req,res,next)=>{
 exports.returnDetails = (req,res,next)=>{
 // console.log(req.params)
 let {username} =req.params
-const sql = `select * from infopath where username='${username}' and type='post';`
+const sql = `select * from infopath where username='${username}' and type='post' order by state;`
 connection.query(sql,(err,data)=>{
     if(err){
         throw err

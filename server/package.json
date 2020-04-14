@@ -16,6 +16,8 @@
     "morgan": "~1.9.1",
     "mount-routes": "^1.0.8",
     "mysql": "^2.18.1",
-    "silly-datetime": "^0.1.2"
+    "silly-datetime": "^0.1.2",
+    "socket.io": "^2.3.0",
+    "underscore": "^1.10.2"
   }
 }

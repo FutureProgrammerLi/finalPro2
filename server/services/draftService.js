@@ -105,3 +105,38 @@ exports.saveDrafts = function (req, res, next) {
         })
     })
 }
+
+exports.deleteDrafts = function(req,res,next){
+    console.log(req.params)
+    let {id} = req.params
+    
+    //用id取路径,删除储存信息的文件
+    const sql1 = `select path from infopath where id='${id}'`
+    connection.query(sql1,(err1,data1)=>{
+        if(err1){
+            throw err1
+        }
+        data1 = JSON.parse(JSON.stringify(data1))
+        let relPath = data1[0].path
+        let absoPath = path.join(__dirname,`../${relPath}`)
+        // console.log(absoPath)
+        fs.unlink(absoPath,err=>{
+            if(err){
+                res.send({status:500,msg:"删除相关文件操作失败"})
+            }
+        })
+    })
+    //删除这个id的记录
+    const sql2 = `delete from infopath where id='${id}'`
+    connection.query(sql2,(err,data)=>{
+        if(err){
+            throw err
+        }
+        console.log(data,typeof data)
+        if(data.affectedRows === 1){
+            res.send({status:200,msg:'删除成功'})
+        }else{
+            res.send({status:500,msg:"删除对应记录失败"})
+        }
+    })
+}

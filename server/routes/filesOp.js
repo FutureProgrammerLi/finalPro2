@@ -6,5 +6,5 @@ router.put('/posts',fileService.upload)
 
 router.put('/fileInfo',fileService.fileInfo)
 
-
+router.get('/sendFiles/:uid',fileService.sendFiles)
 module.exports = router;

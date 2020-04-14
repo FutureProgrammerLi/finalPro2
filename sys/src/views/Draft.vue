@@ -9,7 +9,7 @@
     <el-table-column prop="ops" label="操作" align="right">
         <template slot-scope="scope">
             <el-button type="primary" size="mini" @click="editDraft(scope.row)">修改</el-button>
-            <el-button size="mini" type="danger" @click="test(scope.row)">删除</el-button>
+            <el-button size="mini" type="danger" @click="deleteDraft(scope.$index,scope.row)">删除</el-button>
         </template>
     </el-table-column>
 </el-table>
@@ -41,6 +41,25 @@ export default {
         },
         createDraft(){
             this.$router.push('/editDraft')
+        },
+        deleteDraft(index,row){
+            this.$confirm("删除草稿后将无法恢复,确定要删除吗?","删除确认",{
+                confirmButtonText:"确认",
+                cancelButtonText:"取消",
+                type:"warning"
+            }).then(()=>{
+                this.$http.delete(`/api/draft/deleteDrafts/${row.id}`).then(res=>{
+                    if(res.data.status === 200){
+                        this.draftList.splice(index,1)
+                        this.$message.success('成功删除草稿!')
+                    }else if(res.data.status === 500){
+                        this.$message.error('服务器操作失败')
+                    }else{
+                        this.$message.error('未知错误')
+                        console.log(res)
+                    }
+                })
+            }).catch(()=>{})
         }
     },
     computed: {

@@ -1,6 +1,7 @@
 <template>
 <div id="top" style="height:100%;overflow:auto;">
     <!-- 信息卡片 -->
+
     <el-card shadow="hover" style="width:100%;">
         <div slot="header">
             <span>你好,用户{{userInfo.username}}!</span>
@@ -23,29 +24,30 @@
         <div slot="header">
             您的投稿情况:
         </div>
+        <!-- <el-button @click="test">test</el-button> -->
         <el-row :gutter="12">
             <el-col :span="6">
                 <el-card class="inner total" shadow="hover">
                     总投件数<br>
-                    {{uploadInfo.total}}
+                    {{postNum}}
                 </el-card>
             </el-col>
             <el-col :span="6">
                 <el-card shadow="hover" class="inner passed">
                     通过审核<br>
-                    {{uploadInfo.passed}}
+                    {{passNum}}
                 </el-card>
             </el-col>
             <el-col :span="6">
                 <el-card shadow="hover" class="inner todo">
                     正在审核<br>
-                    {{uploadInfo.todo}}
+                    {{todoNum}}
                 </el-card>
             </el-col>
             <el-col :span="6">
                 <el-card shadow="hover" class="inner unpassed">
                     未通过<br>
-                    {{uploadInfo.unpassed}}
+                    {{unpassNum}}
                 </el-card>
             </el-col>
         </el-row>
@@ -117,7 +119,8 @@
 
 <script>
 import {
-    mapState
+    mapState,
+    mapGetters
 } from 'vuex'
 import code from '../services/encrypt'
 export default {
@@ -229,7 +232,7 @@ export default {
     },
     methods: {
         test() {
-            console.log(this.uploadInfo) //为什么是个数组? dispatch的问题吗?
+            console.log(this.postList) //为什么是个数组? dispatch的问题吗?
         },
         changePwd() {
             this.pwdDialog = true;
@@ -289,8 +292,10 @@ export default {
         }
     },
     computed: {
-        ...mapState(['userInfo', 'uploadInfo','postList'])
+        ...mapState(['userInfo', 'uploadInfo','postList']),
+        ...mapGetters(['postNum','passNum','unpassNum','todoNum'])
     },
+    
     created() {
         this.$store.dispatch('asyncGetUploadInfo', this.$store.state.userInfo.username)
         this.$store.dispatch('asyncGetUploadDetails', this.$store.state.userInfo.username)

@@ -1,6 +1,6 @@
 <template>
 <div>
-    <el-button @click="test">test</el-button>
+    <!-- <el-button @click="test">test</el-button> -->
     <el-card class="box-card">
         <el-table :data="filteredData" style="width: 100%">
             <!-- :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" -->
@@ -15,8 +15,7 @@
                     <el-input v-model="search" size="mini" placeholder="输入关键字搜索" @blur="dealWithScope(scope)" />
                 </template>
                 <template slot-scope="scope">
-                    <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-                    <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+                    <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -43,19 +42,26 @@ export default {
     methods: {
         dealWithScope() {},
         handleEdit(index, row) {
-            // console.log(row.path)
-           this.$http.get(`/api/examine/getExamineContent`,{params:{
-               path:row.path
-           }}).then(res=>{
-               console.log(res)
-           })
-        },
-        handleDelete(index, row) {
-            console.log(index, row);
+            console.log(index,row)
+            this.$http.get(`/api/examine/getExamineContent`, {
+                params: {
+                    path: row.path
+                }
+            }).then(res => {
+                // console.log(res.data)
+                if (res.status === 200) {
+                    this.$router.push({
+                        name: 'EditExamine',
+                        params: {
+                            info: res.data,
+                            id:row.id
+                        }
+                    })
+                }
+            })
         },
         handleSizeChange(newSize) {
             this.pageSize = newSize
-
         },
         handleCurrentChange(currentPage) {
             this.currentPage = currentPage

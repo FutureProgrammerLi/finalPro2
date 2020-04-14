@@ -5,12 +5,18 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mount = require('mount-routes')
 var JwtUtil = require('./modules/token')
+var http = require('http')
+var _=require('underscore')
+var connection = require('./db/conn')
 
 
 var indexRouter = require('./routes/index'); //怎么整合? mount
 var usersRouter = require('./routes/users');
 
 var app = express();
+var server =http.createServer(app)
+var io = require('socket.io').listen(server)
+server.listen(3001)
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -85,8 +91,63 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+
 app.listen(3000,()=>{
   console.log('running...')
 })
+
+var tableObj = {}
+io.on('connection',socket=>{
+  socket.on('regis',username=>{    //客户端触发服务器端
+    // console.log(socket.id,username)
+    tableObj[username] = {
+      id:socket.id,     //可能存在socket.id相同的问题?未知原因
+      online:true
+    }  
+                                 // @@@disconnect时要设置online为false
+    console.log(tableObj)
+  })          // listen to the event
+  // // socket.emit('hello2',data=>{ //emit an event to the socket
+  // //   console.log(`${data}+1`)
+  // // })
+  socket.on('sendMsg',data=>{
+    data = JSON.parse(data) 
+    let toName = data.to
+    //不能直接tableObj[toName]["online"]
+    //在线的话实时发送给别人
+    if(tableObj[toName] && tableObj[toName]["online"]){//不在线的会找不到.就发送不出去
+      let toID = tableObj[toName]["id"]
+      let toSocket = _.findWhere(io.sockets.sockets,{id:toID}) 
+      if(toSocket.emit){
+        toSocket.emit('receiveMsg',data.content)
+      }
+      //不在线就触发客户端存起来
+      // io.sockets.connected[toID].emit('receiveMsg','hello!')
+    }else{
+      let {from,to,content,time}=data
+      const sql = `insert into msgtable(from_user,to_user,content,senttime) values('${from}','${to}','${content}','${time}');`
+      connection.query(sql,(err,data)=>{
+        if(err){
+          throw err
+        }
+        console.log(data)
+      })
+    }
+    // console.log(tableObj)
+    // console.log(data)
+  })
+  socket.on('leave',username=>{
+    tableObj[username]["online"] = false
+    console.log(tableObj)
+  })
+  
+  // socket.emit('progress') //触发客户端的方法
+  // socket.emit('hello')
+  // io.emit('progress')  // emit an event to all connected sockets
+  // }
+})
+
+
+
 
 module.exports = app;
