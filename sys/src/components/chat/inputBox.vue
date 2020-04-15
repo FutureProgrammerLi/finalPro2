@@ -5,6 +5,7 @@
 </template>
 <script>
 export default {
+    props:['username'],
     data() {
         return {
             content: ''
@@ -18,6 +19,7 @@ export default {
                 this.$emit('sendMessage',this.content)
                 this.content = '';
             }
+            // console.log(this.username)
         },
         
     },

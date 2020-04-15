@@ -11,8 +11,13 @@ router.post('/test', service.test);
 
 router.get('/getList/:roleid',service.returnList)
 
+router.get('/userlist',service.returnUserList)
+
+router.get('/sessionlist/:username',service.returnSessionList)
+
 router.get('/getUploadInfo/:username',service.returnUpload)
 
 router.get('/getUploadDetails/:username',service.returnDetails)
+
 
 module.exports = router;

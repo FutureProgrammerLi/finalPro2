@@ -5,14 +5,14 @@
     <el-button @click="testServertEmit">testServertEmit</el-button>
     <el-button @click="testClientOn">testClientOn</el-button> -->
     <div class="sidebar">
-        <!-- <card />
-        <list /> -->
-        <el-input type="text" v-model="to"></el-input>
+        <card />
+        <list  @fromList="toMsg" />
+        <!-- <el-input type="text" v-model="to"></el-input> -->
     </div>
     <div class="main">
-        <!-- <message /> -->
-        <inputBox @sendMessage="testClientEmit" />
-
+        <message :username="username"/>
+        <inputBox @sendMessage="testClientEmit" :username="username" />
+       <!-- <el-button @click="test">test</el-button> -->
         <!-- <div class="text">
             <textarea placeholder="按 Ctrl + Enter 发送" v-model="content"></textarea>
         </div> -->
@@ -22,29 +22,32 @@
 </template>
 
 <script>
-// import card from '../components/chat/card'
-// import list from '../components/chat/list'
-// import message from '../components/chat/message'
+import card from '../components/chat/card'
+import list from '../components/chat/list'
+import message from '../components/chat/message'
 import inputBox from '../components/chat/inputBox'
 
 export default {
     name: "Chat",
     components: {
-        // card,
-        // list,
-        // message,
+        card,
+        list,
+        message,
         inputBox
     },
     created() {
         // this.initData();
+        this.$store.dispatch('asyncGetUserList')
     },
     mounted() {
         this.$socket.emit('connect')
+        this.$store.dispatch('asyncGetSessions',this.$store.state.userInfo.username)
     },
     data() {
         return {
             val: '',
-            to: ''
+            to: '',
+            username:''
         }
     },
     sockets: {
@@ -75,6 +78,13 @@ export default {
         },
         handleDelete(index, row) {
             console.log(index, row);
+        },
+        toMsg(username){
+            this.username = username
+            console.log(username)
+        },
+        test(){
+            console.log(this.$store.state.userlist)
         }
     }
 }

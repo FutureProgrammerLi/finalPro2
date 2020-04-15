@@ -1,29 +1,46 @@
 <template>
-<div class="message" v-scroll-bottom="session.messages">
-    <ul v-if="session">
-        <li v-for="item in session.messages" :key="item.id">
+<div class="message" >
+    <ul >
+        <!-- {{sessions}} -->
+        <li v-for="item in corespond" :key="item.id">
             <p class="time">
-                <span>{{ item.date | time }}</span>
+                <span>{{ item.senttime }}</span>
             </p>
-            <div class="main" :class="{ self: item.self }">
-                <img class="avatar" width="30" height="30" :src="item.self ? user.img : session.user.img" />
-                <div class="text">{{ item.content }}</div>
+             <div class="main" ><!--:class="{ self: item.self }" -->
+                 <img class="avatar" width="30" height="30"  /> <!--:src="item.self ? user.img : session.user.img" -->
+                <div class="text">{{ item.content }}{{item}} </div>
             </div>
         </li>
     </ul>
 </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 export default {
-    filters: {
-        // 将日期过滤为 hour:minutes
-        time (date) {
-            if (typeof date === 'string') {
-                date = new Date(date);
-            }
-            return date.getHours() + ':' + date.getMinutes();
-        }
+    props:['username'],
+    computed:{
+      ...mapState(['sessions']),
+      corespond(){
+          return this.sessions.filter(i=>i.from_user == this.$props.username)
+      }
     },
+    methods: {
+        
+    },
+    created () {
+        this.$on('sentUsername',data=>{
+                console.log(data)
+            })
+    },
+    // filters: {
+    //     // 将日期过滤为 hour:minutes
+    //     time (date) {
+    //         if (typeof date === 'string') {
+    //             date = new Date(date);
+    //         }
+    //         return date.getHours() + ':' + date.getMinutes();
+    //     }
+    // },
     directives: {
         // 发送消息后滚动到底部
         'scroll-bottom' () {

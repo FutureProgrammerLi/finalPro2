@@ -17,11 +17,16 @@ export default new Vuex.Store({
     comments:[],
     commentsNum:0,
     draftContentList:'',
-    uploadInfo:''
+    uploadInfo:'',
+    sessions:[],
+    userlist:[],
+    currentID:0,
+    filterKey:''
   },
   mutations: {
     getUserInfo(state,userInfo){
      state.userInfo = userInfo
+     state.currentID = userInfo.id
     },
     getList(state,data){
       state.menuList = data
@@ -55,7 +60,23 @@ export default new Vuex.Store({
     overwriteInfo(state,data){  
        state.userInfo = Object.assign(state.userInfo,data)
       //  console.log(state.userInfo)
-     }
+     },
+    setMessages({messages},data){
+
+    },
+    getUserList(state,data){
+      state.userlist = data
+    },
+    getSessionList(state,data){
+      state.sessions = data
+      console.log(state.sessions)
+    },
+    SELECT_SECTION(state,id){
+      state.currentID = id //?这都行?!!
+    },
+    SET_FILTER_KEY(state,val){
+      state.filterKey = val
+    }
   },
   actions: {
     asyncGetUserInfo(context,username){
@@ -131,11 +152,27 @@ export default new Vuex.Store({
           }
           // console.log(res)
         })
+      },
+      asyncGetUserList(context){
+        axios.get(`/api/userlist`).then(res=>{
+          context.commit('getUserList',res.data)
+        })
+      },
+      asyncGetSessions(context,username){
+        axios.get(`/api/sessionlist/${username}`).then(res=>{
+          context.commit('getSessionList',res.data)
+        })
+      },
+      inputSearch(context,value){
+        context.commit('SET_FILTER_KEY',value)
       }
   },
   modules: {
   },
   getters:{
+    filterList(state){
+    return state.userlist.filter(i=>i.username!=state.userInfo.username)
+    },
     unreadMsgs(state){
       return state.comments.filter(i=>i.done ==0).length
     },

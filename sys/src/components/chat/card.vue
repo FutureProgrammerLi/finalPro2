@@ -1,41 +1,55 @@
 <template>
 <div class="card">
     <header>
-        <img class="avatar" width="40" height="40" >
-        <p class="name">{{user.name}}</p>
+        <img class="avatar" width="40" height="40" :alt="userInfo.username" :src="userInfo.avatar">
+        <p class="name">{{userInfo.username}}</p>
     </header>
     <footer>
-        <input class="search" type="text" placeholder="search user..." @keyup="onKeyup">
+        <input class="search" type="text" placeholder="search user..." @keyup="onKeyup($event)">
     </footer>
 </div>
 </template>
+
 <script>
+import {
+    mapState
+} from 'vuex'
 export default {
     methods: {
-        onKeyup() {
-            
+        onKeyup(e) {
+            this.$store.dispatch('inputSearch', e.target.value)
         }
     },
+    computed: {
+        ...mapState(['userInfo'])
+    }
 }
 </script>
-<style scoped lang="less">
+
+<style lang="less" scoped>
 .card {
     padding: 12px;
     border-bottom: solid 1px #24272C;
+
     footer {
         margin-top: 10px;
     }
-    .avatar, .name {
+
+    .avatar,
+    .name {
         vertical-align: middle;
     }
+
     .avatar {
         border-radius: 2px;
     }
+
     .name {
         display: inline-block;
         margin: 0 0 0 15px;
         font-size: 16px;
     }
+
     .search {
         padding: 0 10px;
         width: 100%;

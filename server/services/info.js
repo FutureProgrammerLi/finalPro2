@@ -98,3 +98,53 @@ connection.query(sql,(err,data)=>{
     res.send(sentData)
 })
 }
+
+exports.returnUserList = (req,res,next)=>{
+   const sql = `select id,username,avatar from userlist`
+   connection.query(sql,(err,data)=>{
+       if(err){
+           throw err
+       }
+       res.send(data)
+   })
+}
+
+exports.returnSessionList = (req,res,next)=>{
+    console.log(req.params)
+    let {username} = req.params
+    const sql = `select from_user,content,senttime,state from msgtable where to_user='${username}';`
+    connection.query(sql,(err,msgs)=>{
+        if(err){
+            throw err
+        }
+        res.send(msgs)
+    })
+}
+    // const sql1 = `select id,username,avatar,content,senttime,state from userlist as A inner join (select to_user,content,senttime,state from msgtable) as B on A.username = B.to_user;`
+    // //找到id,username,avatar,content,senttime和state
+    // // const sql1 = `select id,username,avatar from userlist`
+    // connection.query(sql1,(err,userlist)=>{
+    //     if(err){
+    //         throw err
+    //     }
+        // userlist = JSON.parse(JSON.stringify(userlist))
+        // userlist.forEach(i=>{     //效率低,限定了username
+        //     i.message = []
+        //     const sql2 = `select content,senttime,state from msgtable where to_user='${i.username}';`
+        //     connection.query(sql2,(err,msgs)=>{
+        //         if(err){
+        //             throw err
+        //         }
+        //         msgs = JSON.parse(JSON.stringify(msgs))
+        //         if(msgs){
+        //             i.message.push(msgs[0])
+        //         }
+        //         console.log(i,'1')
+        //         // console.log(subArr)
+        //     })
+        // })//可能会拿不到msgs?确实
+        // console.log(userlist)
+    //     res.send(userlist)
+    //     // console.log(subArr)
+    // })
+

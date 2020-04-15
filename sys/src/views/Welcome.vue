@@ -76,11 +76,7 @@ export default {
         connect() {
             console.log('连接成功')
         },
-        progress() {
-            console.log('FiredByServer')
-            console.log('111')
-        },
-         receiveMsg(res) {
+        receiveMsg(res) {
             console.log(res)
         }
     },

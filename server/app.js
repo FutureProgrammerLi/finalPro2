@@ -119,11 +119,11 @@ io.on('connection',socket=>{
       let toID = tableObj[toName]["id"]
       let toSocket = _.findWhere(io.sockets.sockets,{id:toID}) 
       if(toSocket.emit){
-        toSocket.emit('receiveMsg',data.content)
+        toSocket.emit('receiveMsg',data)
       }
-      //不在线就触发客户端存起来
       // io.sockets.connected[toID].emit('receiveMsg','hello!')
     }else{
+      //不在线就存起来
       let {from,to,content,time}=data
       const sql = `insert into msgtable(from_user,to_user,content,senttime) values('${from}','${to}','${content}','${time}');`
       connection.query(sql,(err,data)=>{
