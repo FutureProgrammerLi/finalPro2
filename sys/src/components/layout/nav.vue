@@ -20,9 +20,9 @@
         </span>
 
         <el-dropdown @command="goTo">
-            <el-avatar>test</el-avatar> <!-- 头像src -->
+            <el-avatar :src="userInfo.avatar?userInfo.avatar:''" :alt="userInfo.username"></el-avatar> <!-- 头像src -->
             <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-for="item in $store.state.menuList" :key="item.id" :command="item.path">
+                <el-dropdown-item v-for="item in menuList" :key="item.id" :command="item.path">
                     {{item.authName}}
                 </el-dropdown-item>
             </el-dropdown-menu>
@@ -65,7 +65,7 @@ export default {
         }
     },
     computed: {
-        ...mapState(['commentsNum','comments']),
+        ...mapState(['commentsNum','comments','userInfo','menuList']),
         ...mapGetters(['unreadMsgs'])
     },
     created() {

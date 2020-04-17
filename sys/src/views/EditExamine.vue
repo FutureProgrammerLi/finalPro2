@@ -92,7 +92,7 @@ export default {
         download(uid) {
             this.$http.get(`/api/filesOp/sendFiles/${uid}`).then(res => {
                 if(res.status == 200){
-                    let url = window.URL.createObjectURL(new Blob([res.data])) //创建下载链接
+                let url = window.URL.createObjectURL(new Blob([res.data])) //创建下载链接
                 let link = document.createElement('a') //创建a标签
                 link.style.display = 'none' //将a标签隐藏
                 link.href = url //给a标签添加下载链接

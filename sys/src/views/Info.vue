@@ -15,7 +15,11 @@
         <div>
             <i class="el-icon-phone"></i>手机号码: {{userInfo.phone?userInfo.phone:'NULL'}}
         </div>
-        <div>选择您的操作:<el-button type="text" @click="changePwd">修改密码</el-button> | <el-button type="text" style="padding-top:5px;" @click="changeInfo">修改资料</el-button>
+        <div>选择您的操作:
+            <el-button type="text" @click="changePwd">修改密码</el-button>|<el-button type="text" style="padding-top:5px;" @click="changeInfo">修改资料 </el-button>|
+            <el-upload style="display:inline;" action="/api/filesOp/avatarUpload" accept="image/*" :show-file-list="false" :limit="1" :on-change="sizeCheck" :http-request="overwriteUpload">
+                <el-button type="text">上传头像</el-button>
+            </el-upload>
         </div>
     </el-card>
 
@@ -55,10 +59,10 @@
 
     <!-- 投稿详情卡片 -->
     <el-card shadow="hover" style="margin-top:10px;" class="postinfo">
-        <div slot="header" >
+        <div slot="header">
             投稿详情:
         </div>
-        <el-table :data="postList" stripe border style="width: 100%;overflow:hidden;" >
+        <el-table :data="postList" stripe border style="width: 100%;overflow:hidden;">
             <el-table-column prop="title" label="稿件标题" width="300">
             </el-table-column>
             <el-table-column prop="date" label="上传日期" align="center">
@@ -186,6 +190,8 @@ export default {
         return {
             // userInfo: this.$store.state.userInfo,
             // uploadInfo:this.$store.state.uploadInfo,
+            fileList: [],
+            fileReader: '',
             pwdForm: {
                 oldPass: '',
                 phone: '',
@@ -289,29 +295,83 @@ export default {
                     this.infoForm[key] = ''
                 }
             });
+        },
+        sizeCheck(file, fileList) {
+            let satisfied = file.size < 2 * 1024 * 1024 ? true : false
+            if (!satisfied) {
+                this.$message.warning('上传图片不能大于2MB')
+                this.fileList = []
+            }
+        },
+        base64ToBlob(urlData, type) {
+            let arr = urlData.split(',');
+            let mime = arr[0].match(/:(.*?);/)[1] || type;
+            // 去掉url的头，并转化为byte
+            let bytes = window.atob(arr[1]);
+            // 处理异常,将ascii码小于0的转换为大于0
+            let ab = new ArrayBuffer(bytes.length);
+            // 生成视图（直接针对内存）：8位无符号整数，长度1个字节
+            let ia = new Uint8Array(ab);
+            for (let i = 0; i < bytes.length; i++) {
+                ia[i] = bytes.charCodeAt(i);
+            }
+            return new Blob([ab], {
+                type: mime
+            });
+        },
+        overwriteUpload(e) {
+            let file = e.file
+            let fileName = file.name
+            if (file) {
+                this.fileReader.readAsDataURL(file)
+            }
+            this.fileReader.onload = () => {
+                let base64Str = this.fileReader.result
+                let blob = this.base64ToBlob(base64Str) //base64->blob
+                let blobURL = window.URL.createObjectURL(blob)  //blob=>blobURL
+                let data = {
+                    blobURL:blobURL,
+                    name: fileName,
+                    username: this.$store.state.userInfo.username
+                }
+
+                this.$http.put(`/api/filesOp/avatarUpload`, data).then(res => {
+                    console.log(res)
+                    if(res.status === 200){
+                        this.$store.commit('getUserInfo',res.data[0])
+                    }
+                }).catch(err => {
+                    console.log(err)
+                })
+            }
         }
     },
     computed: {
-        ...mapState(['userInfo', 'uploadInfo','postList']),
-        ...mapGetters(['postNum','passNum','unpassNum','todoNum'])
+        ...mapState(['userInfo', 'uploadInfo', 'postList']),
+        ...mapGetters(['postNum', 'passNum', 'unpassNum', 'todoNum'])
     },
-    
+
     created() {
         this.$store.dispatch('asyncGetUploadInfo', this.$store.state.userInfo.username)
         this.$store.dispatch('asyncGetUploadDetails', this.$store.state.userInfo.username)
-    }
+    },
+    mounted() {
+        this.fileReader = new FileReader()
+    },
 
 }
 </script>
 
 <style scoped>
-#top{
-    height:200%!important;
-    overflow:auto;
+#top {
+    height: 200% !important;
+    overflow: auto;
 }
-.el-card{
-    overflow:auto;
+
+.el-card {
+    overflow: auto;
 }
+
 .el-card::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -330,6 +390,7 @@ export default {
 .el-card::-webkit-scrollbar-corner {
     background: #bfbfbf;
 }
+
 .inner {
     text-align: center;
 }
@@ -349,8 +410,9 @@ export default {
 .unpassed:hover {
     background-color: rgb(248, 37, 37);
 }
-.postinfo{
+
+.postinfo {
     height: 30vh;
-    overflow:auto;
+    overflow: auto;
 }
 </style>

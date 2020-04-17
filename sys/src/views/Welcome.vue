@@ -38,6 +38,7 @@
 import navi from '../components/layout/nav'
 import myFooter from '../components/layout/myFooter'
 import obj from '../services/routes'
+import { mapState } from 'vuex'
 export default {
     name:'Welcome',
     components: {
@@ -72,12 +73,16 @@ export default {
            console.log(this.$store.state.comments,this.$store.state.commentsNum)
         }
     },
+    computed:{
+        ...mapState(['sessions'])
+    },
     sockets: {
         connect() {
             console.log('连接成功')
         },
         receiveMsg(res) {
-            console.log(res)
+            this.sessions.push(res)
+            console.log(this.sessions)
         }
     },
     created() {

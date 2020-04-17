@@ -118,7 +118,7 @@ io.on('connection',socket=>{
     if(tableObj[toName] && tableObj[toName]["online"]){//不在线的会找不到.就发送不出去
       let toID = tableObj[toName]["id"]
       let toSocket = _.findWhere(io.sockets.sockets,{id:toID}) 
-      if(toSocket.emit){
+      if(toSocket){
         toSocket.emit('receiveMsg',data)
       }
       // io.sockets.connected[toID].emit('receiveMsg','hello!')

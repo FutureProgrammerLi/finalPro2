@@ -1,14 +1,17 @@
 <template>
 <div class="message" >
+    <!-- <el-button @click="test">test</el-button> -->
     <ul >
-        <!-- {{sessions}} -->
-        <li v-for="item in corespond" :key="item.id">
+        {{correspond}}
+        <!-- {{correspond}}  <br>
+        {{sessions}}  -->
+        <li v-for="item in correspond" :key="item.id">
             <p class="time">
                 <span>{{ item.senttime }}</span>
             </p>
-             <div class="main" ><!--:class="{ self: item.self }" -->
-                 <img class="avatar" width="30" height="30"  /> <!--:src="item.self ? user.img : session.user.img" -->
-                <div class="text">{{ item.content }}{{item}} </div>
+             <div class="main" :class="{ self: item.self }">
+                 <img class="avatar" :src="item.avatar?item.avatar:item.from_user" width="30" height="30"  /> <!--:src="item.self ? user.img : session.user.img" -->
+                 <div class="text">{{ item.content }}</div><!--{{item}} -->
             </div>
         </li>
     </ul>
@@ -20,12 +23,16 @@ export default {
     props:['username'],
     computed:{
       ...mapState(['sessions']),
-      corespond(){
-          return this.sessions.filter(i=>i.from_user == this.$props.username)
+      correspond(){  //对应用户或自己发的
+        return this.sessions.filter(i=>i.from_user == this.username || i.to_user == this.username||i.from == this.username || i.to == this.username) //  
       }
     },
     methods: {
-        
+        test(){
+            // console.log(this.sessions)
+            console.log(this.username)
+            // console.log(Boolean(this.sessions[0].from_user),this.sessions[0])
+        }
     },
     created () {
         this.$on('sentUsername',data=>{
@@ -55,6 +62,9 @@ export default {
 .message {
     padding: 10px 15px;
     overflow-y: scroll;
+    ul{
+        list-style: none;
+    }
     li {
         margin-bottom: 15px;
     }

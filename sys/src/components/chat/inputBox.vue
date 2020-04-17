@@ -15,9 +15,15 @@ export default {
         onKeyup (e) {
             if (e.ctrlKey && e.keyCode === 13 && this.content.length) {
                 // this.sendMessage(this.content);
-                console.log(this.content)
                 this.$emit('sendMessage',this.content)
+                this.$store.commit('SEND_MESSAGE',{
+                    content:this.content,
+                    from_user:this.$store.state.userInfo.username,  //自己的用户名
+                    to_user:this.username,      //要发送到的用户名
+                    date:new Date()
+                })
                 this.content = '';
+                // console.log(this.$store.state.sessions)
             }
             // console.log(this.username)
         },

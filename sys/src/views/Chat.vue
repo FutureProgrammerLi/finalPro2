@@ -1,18 +1,21 @@
 <template>
 <div id="topDiv">
+    <!-- <el-button @click="test">test</el-button> -->
     <!-- {{val}}
     <el-button @click="testClientEmit">testClientEmit</el-button>
     <el-button @click="testServertEmit">testServertEmit</el-button>
     <el-button @click="testClientOn">testClientOn</el-button> -->
     <div class="sidebar">
         <card />
-        <list  @fromList="toMsg" />
+        <list @fromList="toMsg" />
         <!-- <el-input type="text" v-model="to"></el-input> -->
     </div>
     <div class="main">
-        <message :username="username"/>
+        <keep-alive>
+            <message :username="username" />
+        </keep-alive>
         <inputBox @sendMessage="testClientEmit" :username="username" />
-       <!-- <el-button @click="test">test</el-button> -->
+        
         <!-- <div class="text">
             <textarea placeholder="按 Ctrl + Enter 发送" v-model="content"></textarea>
         </div> -->
@@ -26,6 +29,7 @@ import card from '../components/chat/card'
 import list from '../components/chat/list'
 import message from '../components/chat/message'
 import inputBox from '../components/chat/inputBox'
+import { mapState } from 'vuex'
 
 export default {
     name: "Chat",
@@ -38,20 +42,25 @@ export default {
     created() {
         // this.initData();
         this.$store.dispatch('asyncGetUserList')
+        this.$store.dispatch('getComment',this.$store.state.userInfo.username)
     },
     mounted() {
-        this.$socket.emit('connect')
-        this.$store.dispatch('asyncGetSessions',this.$store.state.userInfo.username)
+        this.$socket.emit('connect')  
+            this.$store.dispatch('asyncGetSessions', this.userInfo.username)
+    },
+   
+    computed: {
+        ...mapState(['sessions','userInfo'])
     },
     data() {
         return {
             val: '',
             to: '',
-            username:''
+            username: ''
         }
     },
     sockets: {
-       
+
     },
     methods: {
         testClientEmit(content) {
@@ -60,7 +69,7 @@ export default {
                 from: this.$store.state.userInfo.username,
                 to: this.to,
                 content: content,
-                time: new Date()
+                senttime: new Date()
             }
             this.$socket.emit('sendMsg', JSON.stringify(contentObj))
         },
@@ -79,12 +88,12 @@ export default {
         handleDelete(index, row) {
             console.log(index, row);
         },
-        toMsg(username){
+        toMsg(username) {
+            this.to = username
             this.username = username
-            console.log(username)
         },
-        test(){
-            console.log(this.$store.state.userlist)
+        test() {
+            console.log(this.sessions)
         }
     }
 }
@@ -126,6 +135,8 @@ export default {
     .message {
         height: ~'calc(100% - 160px)';
     }
+
+    
 
 }
 

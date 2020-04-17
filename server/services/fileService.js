@@ -123,3 +123,27 @@ exports.sendFiles = function(req,res,next){
   })
 }
 
+exports.avatarUpload = function(req,res,next){      //上传头像
+  // console.log(req.body)
+  let {blobURL,username} = req.body
+  // console.log(blobURL,username)
+  const sql = `update userlist set avatar='${blobURL}' where username='${username}';`
+  const sql2 = `select * from userlist where username='${username}';`
+  connection.query(sql,(err)=>{
+    if(err){
+      throw err
+    }
+    connection.query(sql2,(err2,data)=>{
+      if(err2){
+        throw err2
+      }
+      res.send(data)
+    })
+  })
+  // console.log(path.join(__dirname,'../uploads/avatar'))
+  //   let form = new formidable.IncomingForm();
+  //   form.uploadDir = path.join(__dirname,'../uploads/avatar')
+  //   form.parse(req,(err,fields,files)=>{
+      
+  //   })
+}

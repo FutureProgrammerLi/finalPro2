@@ -120,6 +120,8 @@ exports.returnSessionList = (req,res,next)=>{
         res.send(msgs)
     })
 }
+
+
     // const sql1 = `select id,username,avatar,content,senttime,state from userlist as A inner join (select to_user,content,senttime,state from msgtable) as B on A.username = B.to_user;`
     // //找到id,username,avatar,content,senttime和state
     // // const sql1 = `select id,username,avatar from userlist`

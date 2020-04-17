@@ -72,10 +72,16 @@ export default new Vuex.Store({
       console.log(state.sessions)
     },
     SELECT_SECTION(state,id){
-      state.currentID = id //?这都行?!!
+      state.currentID = id 
     },
     SET_FILTER_KEY(state,val){
       state.filterKey = val
+    },
+    SEND_MESSAGE(state,msgObj){
+      if(state.userInfo.username == msgObj.from_user){ // 为了在receiveMsg里面复用
+        msgObj.self = true  
+      }
+      state.sessions.push(msgObj)
     }
   },
   actions: {
@@ -187,7 +193,7 @@ export default new Vuex.Store({
     },
     todoNum(state){
       return state.postList.filter(i=>i.state=='todo').length
-    },
+    }
 
   }
 })

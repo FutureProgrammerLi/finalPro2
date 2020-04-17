@@ -2,7 +2,7 @@
 <div class="list">
     <ul>
         <li v-for="item in filterList" :key="item.id" :class="{ active: item.id === currentID }" @click="selectSession(item.id,item.username)">
-            <img class="avatar" width="30" height="30" :alt="item.avatar" :src="item.avatar">
+            <img class="avatar" width="30" height="30" :alt="item.username" :src="item.avatar">
             <p class="name">{{item.username}}</p>
         </li>
     </ul>
@@ -46,12 +46,15 @@ export default {
 
 <style lang="less" scoped>
 .list {
+    ul{
+        list-style-type: none;
+    }
     li {
         padding: 12px 15px;
         border-bottom: 1px solid #292C33;
         cursor: pointer;
         transition: background-color .1s;
-
+        
         &:hover {
             background-color: rgba(255, 255, 255, 0.03);
         }

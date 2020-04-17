@@ -7,4 +7,7 @@ router.put('/posts',fileService.upload)
 router.put('/fileInfo',fileService.fileInfo)
 
 router.get('/sendFiles/:uid',fileService.sendFiles)
+
+router.put('/avatarUpload',fileService.avatarUpload)
+
 module.exports = router;
