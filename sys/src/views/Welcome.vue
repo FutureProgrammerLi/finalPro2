@@ -60,7 +60,7 @@ export default {
                 '好友聊天':'el-icon-chat-dot-round'
             },
             routeMenu:[],
-            roleid:''
+            roleid:'',
         }
     },
     methods: {
@@ -74,13 +74,29 @@ export default {
         }
     },
     computed:{
-        ...mapState(['sessions'])
+        ...mapState(['sessions','userInfo','userlist','to_username'])
     },
     sockets: {
         connect() {
             console.log('连接成功')
         },
         receiveMsg(res) {
+            // console.log(res.avatar)
+            // console.log(this.userInfo.username)
+            // if(res.from == this.to_username){
+            //     res.avatar = this.userInfo.avatar
+            //     console.log(this.userInfo.avatar)
+            // }
+
+            // if(res.from == this.to_username){//由list传来的username,就是to_user
+            
+            //     this.userlist.forEach(i=>{   //?逻辑复杂
+            //         if(i.username == res.from){
+            //             res.avatar = i.avatar
+            //             console.log(i)
+            //         }
+            //     })
+            // }  
             this.sessions.push(res)
             console.log(this.sessions)
         }
@@ -91,6 +107,7 @@ export default {
     },
     mounted(){
         this.$socket.emit('regis',this.$store.state.userInfo.username)
+        
     }
     
     
@@ -110,9 +127,9 @@ div,
     line-height: 160px;
 } */
 .el-main{
-    overflow: hidden;
+    overflow: auto;
     background-color: rgb(187, 247, 255);
-    height:100%;
+    height:auto;
 }
 
 body>.el-container {

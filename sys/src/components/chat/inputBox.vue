@@ -20,7 +20,8 @@ export default {
                     content:this.content,
                     from_user:this.$store.state.userInfo.username,  //自己的用户名
                     to_user:this.username,      //要发送到的用户名
-                    date:new Date()
+                    senttime:new Date(),
+                    avatar:this.$store.state.userInfo.avatar
                 })
                 this.content = '';
                 // console.log(this.$store.state.sessions)

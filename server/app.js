@@ -124,8 +124,8 @@ io.on('connection',socket=>{
       // io.sockets.connected[toID].emit('receiveMsg','hello!')
     }else{
       //不在线就存起来
-      let {from,to,content,time}=data
-      const sql = `insert into msgtable(from_user,to_user,content,senttime) values('${from}','${to}','${content}','${time}');`
+      let {from,to,content,senttime}=data
+      const sql = `insert into msgtable(from_user,to_user,content,senttime) values('${from}','${to}','${content}','${senttime}');`
       connection.query(sql,(err,data)=>{
         if(err){
           throw err

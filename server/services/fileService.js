@@ -147,3 +147,30 @@ exports.avatarUpload = function(req,res,next){      //上传头像
       
   //   })
 }
+
+exports.announce = function(req,res,next){
+  // console.log(req.body)
+  let {title,content,ptime,publisher} = req.body
+  const sql = `insert into announcetable(title,content,ptime,publisher) values('${title}','${content}','${ptime}','${publisher}');`
+  connection.query(sql,(err,data)=>{
+    if(err){
+      throw err
+    }
+    if(data.affectedRows === 1){
+      res.send({status:200,msg:'发布成功'})
+    }else{
+      res.send({status:500,msg:'服务器发生错误'})
+    }
+  })
+}
+
+exports.announceList = function(req,res,next){
+  const sql = `select * from announcetable`
+  connection.query(sql,(err,data)=>{
+    if(err){
+      throw err
+    }
+    data = JSON.parse(JSON.stringify(data))
+    res.send(data)
+  })
+}

@@ -9,10 +9,12 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: localStorage.getItem("state") ? JSON.parse(localStorage.getItem("state")):{
     userInfo:'',
+    to_username:'',
     menuList:[],
     draftList:[],
     postList:[],
     allPostList:[],
+    announceList:[],
     postListTotal:0,
     comments:[],
     commentsNum:0,
@@ -61,15 +63,15 @@ export default new Vuex.Store({
        state.userInfo = Object.assign(state.userInfo,data)
       //  console.log(state.userInfo)
      },
-    setMessages({messages},data){
-
-    },
     getUserList(state,data){
       state.userlist = data
     },
     getSessionList(state,data){
       state.sessions = data
-      console.log(state.sessions)
+      // console.log(state.sessions)
+    },
+    getAnnounceList(state,list){
+      state.announceList = list
     },
     SELECT_SECTION(state,id){
       state.currentID = id 
@@ -82,6 +84,10 @@ export default new Vuex.Store({
         msgObj.self = true  
       }
       state.sessions.push(msgObj)
+    },
+    SET_TO_USERNAME(state,username){
+      state.to_username = username
+      console.log(state.to_username)
     }
   },
   actions: {
@@ -169,9 +175,17 @@ export default new Vuex.Store({
           context.commit('getSessionList',res.data)
         })
       },
+      asyncGetAnnounceList(context){
+        axios.get(`/api/filesOp/announceList`).then(res=>{
+          if(res.status == 200){
+            context.commit('getAnnounceList',res.data)
+          }
+        })
+      },
       inputSearch(context,value){
         context.commit('SET_FILTER_KEY',value)
-      }
+      },
+
   },
   modules: {
   },

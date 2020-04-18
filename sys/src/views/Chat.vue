@@ -46,7 +46,7 @@ export default {
     },
     mounted() {
         this.$socket.emit('connect')  
-            this.$store.dispatch('asyncGetSessions', this.userInfo.username)
+        this.$store.dispatch('asyncGetSessions', this.userInfo.username)
     },
    
     computed: {
@@ -69,7 +69,8 @@ export default {
                 from: this.$store.state.userInfo.username,
                 to: this.to,
                 content: content,
-                senttime: new Date()
+                senttime: new Date(),
+                avatar:this.$store.state.userInfo.avatar
             }
             this.$socket.emit('sendMsg', JSON.stringify(contentObj))
         },

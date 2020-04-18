@@ -32,6 +32,7 @@ export default {
         selectSession(id, username) {
             this.$store.commit('SELECT_SECTION', id) //设置currentID = id
             // console.log(id, username)
+            this.$store.commit('SET_TO_USERNAME',username)
             this.$emit('fromList',username)//传给message组件
             // console.log(this.currentID,id)
             //DONE

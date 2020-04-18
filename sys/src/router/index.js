@@ -58,6 +58,11 @@ const routes = [
         component:()=>import('../views/Announce.vue')
       },
       {
+        path:'/showannounce',
+        name:'ShowAnnounce',
+        component:()=>import('../views/ShowAnnounce.vue')
+      },
+      {
         path:'/editexamine',
         name:'EditExamine',
         component:()=>import('../views/EditExamine.vue')

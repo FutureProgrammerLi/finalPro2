@@ -77,6 +77,23 @@
         </el-table>
     </el-card>
 
+    <!-- 公告卡片 -->
+    <el-card class="announce-card">
+        <el-table :data="announceList" stripe border style="width: 100%;overflow:hidden;">
+            <el-table-column prop="title" label="公告标题" width="300">
+            </el-table-column>
+            <el-table-column prop="ptime" label="发布日期" align="center">
+            </el-table-column>
+            <el-table-column prop="publisher" label="发布者" align="center">
+            </el-table-column>
+            <el-table-column label="操作" align="right">
+                <template slot-scope="scope">
+                <el-button type="primary" @click="read(scope.row)">查看</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-card>
+
     <!-- 修改密码的弹窗 -->
     <el-dialog title="修改密码" :visible.sync="pwdDialog" width="30%">
         <el-form :model="pwdForm" ref="pwdFormRef" label-width="100px" :rules="checkRules">
@@ -238,7 +255,7 @@ export default {
     },
     methods: {
         test() {
-            console.log(this.postList) //为什么是个数组? dispatch的问题吗?
+            console.log(this.announceList) //为什么是个数组? dispatch的问题吗?
         },
         changePwd() {
             this.pwdDialog = true;
@@ -328,32 +345,39 @@ export default {
             this.fileReader.onload = () => {
                 let base64Str = this.fileReader.result
                 let blob = this.base64ToBlob(base64Str) //base64->blob
-                let blobURL = window.URL.createObjectURL(blob)  //blob=>blobURL
+                let blobURL = window.URL.createObjectURL(blob) //blob=>blobURL
                 let data = {
-                    blobURL:blobURL,
+                    blobURL: blobURL,
                     name: fileName,
                     username: this.$store.state.userInfo.username
                 }
 
                 this.$http.put(`/api/filesOp/avatarUpload`, data).then(res => {
                     console.log(res)
-                    if(res.status === 200){
-                        this.$store.commit('getUserInfo',res.data[0])
+                    if (res.status === 200) {
+                        this.$store.commit('getUserInfo', res.data[0])
                     }
                 }).catch(err => {
                     console.log(err)
                 })
             }
+        },
+        read(info){
+            this.$router.push({
+                name:'ShowAnnounce',
+                params:info
+            })
         }
     },
     computed: {
-        ...mapState(['userInfo', 'uploadInfo', 'postList']),
+        ...mapState(['userInfo', 'uploadInfo', 'postList','announceList']),
         ...mapGetters(['postNum', 'passNum', 'unpassNum', 'todoNum'])
     },
 
     created() {
         this.$store.dispatch('asyncGetUploadInfo', this.$store.state.userInfo.username)
         this.$store.dispatch('asyncGetUploadDetails', this.$store.state.userInfo.username)
+        this.$store.dispatch('asyncGetAnnounceList');
     },
     mounted() {
         this.fileReader = new FileReader()
@@ -364,8 +388,10 @@ export default {
 
 <style scoped>
 #top {
-    height: 200% !important;
-    overflow: auto;
+    height: auto;
+    width:100%;
+    overflow-y: auto;
+    overflow-x: hidden!important;
 }
 
 .el-card {
@@ -410,7 +436,9 @@ export default {
 .unpassed:hover {
     background-color: rgb(248, 37, 37);
 }
-
+.announce-card{
+    margin-top:10px;
+}
 .postinfo {
     height: 30vh;
     overflow: auto;

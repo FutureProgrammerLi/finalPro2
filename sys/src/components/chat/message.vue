@@ -2,16 +2,16 @@
 <div class="message" >
     <!-- <el-button @click="test">test</el-button> -->
     <ul >
-        {{correspond}}
-        <!-- {{correspond}}  <br>
-        {{sessions}}  -->
+        <!-- {{correspond}}<br>
+        {{sessions}} -->
+        
         <li v-for="item in correspond" :key="item.id">
             <p class="time">
                 <span>{{ item.senttime }}</span>
             </p>
              <div class="main" :class="{ self: item.self }">
                  <img class="avatar" :src="item.avatar?item.avatar:item.from_user" width="30" height="30"  /> <!--:src="item.self ? user.img : session.user.img" -->
-                 <div class="text">{{ item.content }}</div><!--{{item}} -->
+                 <div class="text">{{ item.content }}</div><!-- -->
             </div>
         </li>
     </ul>
