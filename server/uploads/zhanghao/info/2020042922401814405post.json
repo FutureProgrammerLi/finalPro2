@@ -1,0 +1,24 @@
+{
+    "0": {
+        "status": "ready",
+        "name": "问题整理.txt",
+        "size": 240,
+        "percentage": 0,
+        "uid": 1588171216955,
+        "raw": {
+            "uid": 1588171216955
+        }
+    },
+    "title": "上传文件的测试",
+    "summary": "",
+    "summaryInEnglish": "",
+    "content": "",
+    "name": "哈哈",
+    "gender": "男",
+    "email": "123@qq.com",
+    "phone": "13676123123",
+    "address": "123132",
+    "username": "zhanghao",
+    "kind": "post",
+    "draftToPost": false
+}

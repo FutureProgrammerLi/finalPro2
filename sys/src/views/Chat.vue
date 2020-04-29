@@ -29,7 +29,8 @@ import card from '../components/chat/card'
 import list from '../components/chat/list'
 import message from '../components/chat/message'
 import inputBox from '../components/chat/inputBox'
-import { mapState } from 'vuex'
+import a from '../services/GetDate'
+import { mapState , mapGetters } from 'vuex'
 
 export default {
     name: "Chat",
@@ -50,7 +51,7 @@ export default {
     },
    
     computed: {
-        ...mapState(['sessions','userInfo'])
+        ...mapState(['sessions','userInfo']),
     },
     data() {
         return {
@@ -66,10 +67,10 @@ export default {
         testClientEmit(content) {
             // console.log(this.$socket.emit)
             let contentObj = {
-                from: this.$store.state.userInfo.username,
-                to: this.to,
+                from_user: this.$store.state.userInfo.username,
+                to_user: this.to,
                 content: content,
-                senttime: new Date(),
+                senttime: a.getDate(),
                 avatar:this.$store.state.userInfo.avatar
             }
             this.$socket.emit('sendMsg', JSON.stringify(contentObj))
@@ -95,6 +96,9 @@ export default {
         },
         test() {
             console.log(this.sessions)
+        },
+        beforeDestroy(){
+          sessionStorage.setItem('sessions',this.sessions)
         }
     }
 }

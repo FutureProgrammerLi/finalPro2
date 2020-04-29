@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 
+import {_} from 'vue-underscore'
+
 // import { Message } from 'element-ui'
 
 Vue.use(Vuex)
@@ -20,7 +22,7 @@ export default new Vuex.Store({
     commentsNum:0,
     draftContentList:'',
     uploadInfo:'',
-    sessions:[],
+    sessions:localStorage.getItem('sessions') ?localStorage.getItem('sessions'):[],
     userlist:[],
     currentID:0,
     filterKey:''
@@ -76,9 +78,6 @@ export default new Vuex.Store({
     SELECT_SECTION(state,id){
       state.currentID = id 
     },
-    SET_FILTER_KEY(state,val){
-      state.filterKey = val
-    },
     SEND_MESSAGE(state,msgObj){
       if(state.userInfo.username == msgObj.from_user){ // 为了在receiveMsg里面复用
         msgObj.self = true  
@@ -87,7 +86,7 @@ export default new Vuex.Store({
     },
     SET_TO_USERNAME(state,username){
       state.to_username = username
-      console.log(state.to_username)
+      // console.log(state.to_username)
     }
   },
   actions: {
@@ -191,6 +190,7 @@ export default new Vuex.Store({
   },
   getters:{
     filterList(state){
+      // console.log(typeof state.userlist,state.userlist)
     return state.userlist.filter(i=>i.username!=state.userInfo.username)
     },
     unreadMsgs(state){
@@ -207,8 +207,16 @@ export default new Vuex.Store({
     },
     todoNum(state){
       return state.postList.filter(i=>i.state=='todo').length
+    },
+    getterSessions(state){
+      // console.log(_.findWhere(state.userlist,{username}))
+      state.sessions.forEach(i=>{
+        // console.log(_.findWhere(state.userlist,{username:i.from_user}))
+        let {avatar} = _.findWhere(state.userlist,{username:i.from_user})
+        i.avatar =  avatar
+      })
+      return state.sessions
     }
-
   }
 })
 

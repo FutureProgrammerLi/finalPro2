@@ -67,11 +67,17 @@
             </el-table-column>
             <el-table-column prop="date" label="上传日期" align="center">
             </el-table-column>
-            <el-table-column prop="state" label="状态" align="right">
+            <el-table-column prop="state" label="状态" align="center">
                 <template slot-scope="scope">
                     <el-tag type="success" v-if="scope.row.state == 'passed'">通过审核</el-tag>
                     <el-tag type="warning" v-if="scope.row.state == 'todo'">正在审核</el-tag>
                     <el-tag type="danger" v-if="scope.row.state == 'unpassed'">审核未通过</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作" align="right">
+                <template slot-scope="scope">
+                    <el-button type="primary" @click="show(scope.row)">查看</el-button>
+                    <el-button v-if="scope.row.state == 'todo'" type="danger" @click="withdraw(scope.row.id)">退稿</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -88,7 +94,7 @@
             </el-table-column>
             <el-table-column label="操作" align="right">
                 <template slot-scope="scope">
-                <el-button type="primary" @click="read(scope.row)">查看</el-button>
+                    <el-button type="primary" @click="read(scope.row)">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -362,15 +368,35 @@ export default {
                 })
             }
         },
-        read(info){
+        read(info) {
             this.$router.push({
-                name:'ShowAnnounce',
-                params:info
+                name: 'ShowAnnounce',
+                params: info
             })
+        },
+        show(info) {
+            console.log(info)
+        },
+        withdraw(id) {
+            this.$confirm('退稿后稿件将保存在草稿箱,您确定要退稿吗?', '提示', {
+                confirmText: '确定',
+                cancelText: '取消',
+                type: 'warning'
+            }).then(
+                this.$http.delete(`/api/filesOp/withdraw/${id}`).then(res => {
+                    if (res.data.status === 200) {
+                        this.$message.success('退稿成功!')
+                        this.$store.dispatch('asyncGetUploadDetails', this.$store.state.userInfo.username)
+                    } else {
+                        this.$message.error('退稿时出现错误!')
+                    }
+                })
+            )
+              .catch(()=>{})
         }
     },
     computed: {
-        ...mapState(['userInfo', 'uploadInfo', 'postList','announceList']),
+        ...mapState(['userInfo', 'uploadInfo', 'postList', 'announceList']),
         ...mapGetters(['postNum', 'passNum', 'unpassNum', 'todoNum'])
     },
 
@@ -389,9 +415,9 @@ export default {
 <style scoped>
 #top {
     height: auto;
-    width:100%;
+    width: 100%;
     overflow-y: auto;
-    overflow-x: hidden!important;
+    overflow-x: hidden !important;
 }
 
 .el-card {
@@ -436,9 +462,11 @@ export default {
 .unpassed:hover {
     background-color: rgb(248, 37, 37);
 }
-.announce-card{
-    margin-top:10px;
+
+.announce-card {
+    margin-top: 10px;
 }
+
 .postinfo {
     height: 30vh;
     overflow: auto;

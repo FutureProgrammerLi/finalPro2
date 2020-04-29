@@ -1,7 +1,8 @@
 <template>
 <div id="box">
     <el-button type="primary" @click="createDraft">新建草稿</el-button>
-<el-table :data="draftList" stripe border style="width: 100%">
+    <!-- <el-button @click="test">test</el-button> -->
+<el-table :data="draftList?draftList:[]" stripe border style="width: 100%">
     <el-table-column prop="title" label="稿件标题" width="300">
     </el-table-column>
     <el-table-column prop="date" label="上传日期" align="center">
@@ -28,7 +29,7 @@ export default {
     },
     methods: {
         test(){
-          console.log(typeof this.$store.state.draftList)
+          console.log(this.$store.state.draftList)
         },
         editDraft(content) {
             // console.log(content)

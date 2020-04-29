@@ -12,7 +12,7 @@ class Jwt {
      let certificate = fs.readFileSync(path.join(__dirname,'../key/private.key')) //私钥
      let token = jwt.sign({
          payload,
-         exp: createdTime + 60*60   //token有效时间 
+         exp: createdTime + 60*60   //token有效时间  60*60
      },certificate,{
          algorithm:'RS256'
      })

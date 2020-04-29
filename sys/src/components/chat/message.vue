@@ -4,7 +4,8 @@
     <ul >
         <!-- {{correspond}}<br>
         {{sessions}} -->
-        
+        <!-- {{sessions}} -->
+        <!-- {{correspond}} -->
         <li v-for="item in correspond" :key="item.id">
             <p class="time">
                 <span>{{ item.senttime }}</span>
@@ -18,19 +19,20 @@
 </div>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 export default {
     props:['username'],
     computed:{
-      ...mapState(['sessions']),
+      ...mapState(['sessions','userlist']),
+      ...mapGetters(['getterSessions']),
       correspond(){  //对应用户或自己发的
-        return this.sessions.filter(i=>i.from_user == this.username || i.to_user == this.username||i.from == this.username || i.to == this.username) //  
+        return this.getterSessions.filter(i=>i.from_user == this.username || i.to_user == this.username||i.from == this.username || i.to == this.username) //  
       }
     },
     methods: {
         test(){
             // console.log(this.sessions)
-            console.log(this.username)
+            console.log(this.userlist,this.getterSessions)
             // console.log(Boolean(this.sessions[0].from_user),this.sessions[0])
         }
     },
@@ -39,15 +41,7 @@ export default {
                 console.log(data)
             })
     },
-    // filters: {
-    //     // 将日期过滤为 hour:minutes
-    //     time (date) {
-    //         if (typeof date === 'string') {
-    //             date = new Date(date);
-    //         }
-    //         return date.getHours() + ':' + date.getMinutes();
-    //     }
-    // },
+
     directives: {
         // 发送消息后滚动到底部
         'scroll-bottom' () {

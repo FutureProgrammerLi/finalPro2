@@ -14,4 +14,6 @@ router.get('/sendFiles/:uid',fileService.sendFiles)
 
 router.put('/avatarUpload',fileService.avatarUpload)
 
+router.delete('/withdraw/:id',fileService.withdraw)
+
 module.exports = router;

@@ -7,7 +7,7 @@ const sd = require('silly-datetime')
 exports.upload = function(req,res,next){
     
     let {username,uid} = req.headers
-    console.log(username,uid)
+    // console.log(username,uid)
     let storePath = path.join(__dirname,`../uploads`) +`/${username}`;
     if(!fs.existsSync(storePath)){        //判断是否为首次上传,不是则创建目录
          fs.mkdirSync(storePath)           //创建以用户名为目录的第一级目录
@@ -76,11 +76,11 @@ if(draftToPost && id){                 //在草稿箱里面投稿,有id才找,�
     res.send({status:201,msg:"投稿成功"})
   })
 }else{
-  console.log(`${username}`)
+  // console.log(`${username}`)
 let infoPath = path.join(__dirname,`../uploads`) +`/${username}` + `/info/`
 // console.log(infoPath)
 // console.log(fs.existsSync(infoPath))
-console.log(infoPath)
+// console.log(infoPath)
 if(fs.existsSync(infoPath) == false){
   fs.mkdirSync(`./uploads/${username}/`)         //要一层一层创建,不能直接创建两个目录
   fs.mkdirSync(`./uploads/${username}/info/`)
@@ -173,4 +173,46 @@ exports.announceList = function(req,res,next){
     data = JSON.parse(JSON.stringify(data))
     res.send(data)
   })
+}
+
+exports.withdraw = function(req,res,next){
+  let { id } = req.params
+  const sql = `update infopath set type='draft' where id='${id}';`
+  connection.query(sql,(err,data)=>{
+    if(err){
+      throw err
+    }
+    if(data.affectedRows === 1){
+      res.send({status:200,msg:'退稿成功'})
+    }
+  })
+  // const delInfo = `delete from infopath where id='${id}'`
+  // const getuid = `select path from infopath where id='${id}'`
+  // connection.query(getuid,(err,infopath)=>{
+  //   if(err){
+  //     throw err
+  //   }
+  //   let absPath = path.join(__dirname,`../${infopath[0].path}`)
+  //   let content = JSON.parse(fs.readFileSync(absPath,'utf-8'))
+  //   if(content['0']){
+  //     let uid = content['0'][uid]
+  //     const delFile = `delete from uploadpath where uid='${uid}';`
+  //     connection.query(delFile, (err)=>{ //删除uploadpath的记录
+  //       if(err){
+  //         throw err
+  //       }
+  //       fs.unlink(absPath,()=>{      
+  //         console.log('deleted')
+  //       })
+  //     })
+  //   }
+  // })
+  // connection.query(delInfo,(err,data)=>{  //删除infopath的记录
+  //   if(err){
+  //     throw err
+  //   }
+  //   if(data.affectedRows === 1){
+  //     res.send({status:200,msg:'退稿成功'})
+  //   }
+  // })
 }

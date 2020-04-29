@@ -111,8 +111,9 @@ io.on('connection',socket=>{
   // //   console.log(`${data}+1`)
   // // })
   socket.on('sendMsg',data=>{
+    console.log(data)
     data = JSON.parse(data) 
-    let toName = data.to
+    let toName = data.to_user
     //不能直接tableObj[toName]["online"]
     //在线的话实时发送给别人
     if(tableObj[toName] && tableObj[toName]["online"]){//不在线的会找不到.就发送不出去
@@ -124,8 +125,9 @@ io.on('connection',socket=>{
       // io.sockets.connected[toID].emit('receiveMsg','hello!')
     }else{
       //不在线就存起来
-      let {from,to,content,senttime}=data
-      const sql = `insert into msgtable(from_user,to_user,content,senttime) values('${from}','${to}','${content}','${senttime}');`
+      let {from_user,to_user,content,senttime}=data
+      // console.log(data)
+      const sql = `insert into msgtable(from_user,to_user,content,senttime) values('${from_user}','${to_user}','${content}','${senttime}');`
       connection.query(sql,(err,data)=>{
         if(err){
           throw err
@@ -141,11 +143,16 @@ io.on('connection',socket=>{
     console.log(tableObj)
   })
   
+  socket.on('disconnect',()=>{
+    console.log('why?')
+  })
   // socket.emit('progress') //触发客户端的方法
   // socket.emit('hello')
   // io.emit('progress')  // emit an event to all connected sockets
   // }
 })
+
+
 
 
 
