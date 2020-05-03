@@ -15,12 +15,11 @@
             <el-form-item label="正文:" prop="content">
                 <el-input type="textarea" :rows="7" v-model="rebuildObj.content" readonly></el-input>
             </el-form-item>
-            <el-form-item label="文件内容:" v-if="rebuildObj[0]" prop="content">
-                <!-- 当有上传文件时显示这两行 -->
-                <el-input type="textarea" :rows="7" v-model="rebuildObj.fileContent" readonly></el-input>
+            <el-form-item label="文件内容:" v-if="content[0] != undefined" >
+                <el-input type="textarea" :rows="7" v-model="content.fileContent" readonly></el-input>
             </el-form-item>
-            <el-form-item v-if="rebuildObj[0]">
-                <el-button type="text" @click="download(rebuildObj[0].uid)">下载稿件文件</el-button>
+            <el-form-item v-if="content[0] != undefined">
+                <el-button type="text" @click="download(content[0].uid)">下载稿件文件</el-button>
             </el-form-item>
             <el-form-item label="作者姓名:" prop="name">
                 <el-input v-model="rebuildObj.name" readonly></el-input>
@@ -135,12 +134,21 @@ export default {
         this.id = this.$route.params.id
     },
     beforeMount() {
-        Object.keys(this.content).forEach(i => {
-            if (i != 'username' && i != 'kind' && i != 'draftToPost') {
-                this.rebuildObj[i] = this.content[i] //用来隐藏信息
-            }
-        })
-        // console.log(this.rebuildObj)
+        
+        for (const i in this.content) {
+
+            this.rebuildObj[i] = this.content[i]
+            // console.log(i)
+        }
+        return 
+        // Object.keys(this.content).forEach(i => {
+        //     console.log(i)
+        //     // if (i != 'username' && i != 'kind' && i != 'draftToPost') {
+        //     //     this.rebuildObj[i] = this.content[i] //用来隐藏信息
+        //     // }
+        // })
+    //     console.log(this.rebuildObj)
+    // }
     }
 }
 </script>

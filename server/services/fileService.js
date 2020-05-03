@@ -3,11 +3,11 @@ const fs = require('fs')
 const path = require('path')
 const formidable = require('formidable')
 const sd = require('silly-datetime')
+const iconv= require('iconv-lite')
+const BufferHelper = require('bufferhelper')
 
 exports.upload = function(req,res,next){
-    
     let {username,uid} = req.headers
-    // console.log(username,uid)
     let storePath = path.join(__dirname,`../uploads`) +`/${username}`;
     if(!fs.existsSync(storePath)){        //判断是否为首次上传,不是则创建目录
          fs.mkdirSync(storePath)           //创建以用户名为目录的第一级目录
@@ -18,23 +18,28 @@ exports.upload = function(req,res,next){
     }
     let form = new formidable.IncomingForm();
     form.uploadDir = worksPath
+    form.keepExtensions = true
+    form.encoding = 'utf-8'
     form.parse(req,(err,fields,files)=>{
         if(err){
           res.send(err)
         }
-
-        // 文件操作
+        
+      // console.log(files)
+      //   // 文件操作
+      
       let time = sd.format(new Date(),'YYYYMMDDHHmmss')
       let random = parseInt(Math.random() * 89999 +10000)
       let extent = path.extname(files.file.name)
       let newPath = worksPath + time + random + extent
-      
       fs.rename(files.file.path,newPath,(err)=>{
         if(err){
           throw Error('改名失败')
         }
       })
       let relativePath = `/uploads/${username}/works/` + time + random + extent
+      // let content = fs.readFileSync(path.join(__dirname,`../${relativePath}`))
+      // console.log(path.join(__dirname,`../${relativePath}`))
       const sql = `insert into uploadpath(username , uploadPath,uid) values('${username}', '${relativePath}','${uid}')`
         connection.query(sql,(err,data)=>{
           if(err){
@@ -52,7 +57,7 @@ exports.upload = function(req,res,next){
 }
 
 exports.fileInfo = function(req,res,next){
-// console.log(req.body)
+console.log(req.body)
 let {username,kind,title,draftToPost,id} = req.body
 if(draftToPost && id){                 //在草稿箱里面投稿,有id才找,无则创建信息文件,用于区分新建的和已有的草稿
   //将文本信息的kind设置为post
@@ -193,7 +198,7 @@ exports.withdraw = function(req,res,next){
   //     throw err
   //   }
   //   let absPath = path.join(__dirname,`../${infopath[0].path}`)
-  //   let content = JSON.parse(fs.readFileSync(absPath,'utf-8'))
+  //   let content = JSON.parse(fs.readFileSync(absPath,'GB2312'))
   //   if(content['0']){
   //     let uid = content['0'][uid]
   //     const delFile = `delete from uploadpath where uid='${uid}';`

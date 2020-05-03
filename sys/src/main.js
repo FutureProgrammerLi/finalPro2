@@ -32,7 +32,7 @@ axios.interceptors.request.use(config => { //必须返回config这个对象,plug
 axios.interceptors.response.use((res) => {
   if(res.data.status == 403){
     router.push('/')
-    Message.error('登录超时!请重新登录')
+    Message.error('登录超时或没有权限!请重新登录')
     // console.log(router)
   }
   // console.log(router.push)

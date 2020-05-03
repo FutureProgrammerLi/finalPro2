@@ -48,7 +48,7 @@ export default {
                     path: row.path
                 }
             }).then(res => {
-                // console.log(res.data)
+                console.log(res.status)
                 if (res.status === 200) {
                     this.$router.push({
                         name: 'EditExamine',
@@ -57,6 +57,8 @@ export default {
                             id:row.id
                         }
                     })
+                }else{
+                    console.log(res)
                 }
             })
         },

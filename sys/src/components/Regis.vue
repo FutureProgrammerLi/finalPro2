@@ -49,13 +49,19 @@ export default {
             }
         };
         var checkIfExist = (rule, value, callback) => {
-            this.$http.post('/api/users/checkIfExist', value).then(res => {
-                if (res.data.status === 201) { //有必要吗?
-                    callback()
-                } else if (res.data.status === 422) {
-                    callback(new Error('账号已存在!'))
-                }
-            })
+            let reg = /^[a-zA-Z0-9]+$/.test(value)
+            if (reg) {
+                this.$http.post('/api/users/checkIfExist', value).then(res => {
+                    if (res.data.status === 201) { //有必要吗?
+                        callback()
+                    } else if (res.data.status === 422) {
+                        callback(new Error('账号已存在!'))
+                    }
+                })
+            }else{
+                callback(new Error('请输入英文字母或数字!'))
+            }
+
         };
         var checkEmail = (rule, value, callback) => {
             let reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
@@ -65,14 +71,14 @@ export default {
                 callback(new Error('请输入正确的邮箱地址!'))
             }
         };
-        var checkPhone = (rule,value,callback)=>{
-            if( value === ''){
+        var checkPhone = (rule, value, callback) => {
+            if (value === '') {
                 callback(new Error('请输入手机号码'))
-            }else{
+            } else {
                 const regPhone = /^1[3456789]\d{9}$/
-                if(regPhone.test(value)){
+                if (regPhone.test(value)) {
                     callback()
-                }else{
+                } else {
                     callback(new Error('请输入正确的手机号码!'))
                 }
             }
@@ -84,7 +90,7 @@ export default {
                 password: '',
                 ensure: '', //表格校验时用
                 email: '',
-                phone:''
+                phone: ''
             },
             checkRules: {
                 username: [{
@@ -121,9 +127,9 @@ export default {
                         trigger: 'blur'
                     }
                 ],
-                phone:[{
-                    validator:checkPhone,
-                    trigger:'blur'
+                phone: [{
+                    validator: checkPhone,
+                    trigger: 'blur'
                 }]
             }
         }
@@ -184,5 +190,4 @@ export default {
 /deep/.el-form-item__label {
     color: white;
 }
-
 </style>

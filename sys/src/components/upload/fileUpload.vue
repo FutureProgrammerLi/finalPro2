@@ -1,6 +1,6 @@
 <template>
 <div id="box" style="margin-top:15px;">
-    <el-upload class="upload-demo" ref="uploadRef" action="/api/posts" accept=".doc,.docx,.txt" :data="myData" :limit="1" :headers="myHeader" :on-exceed="handleExceed" :on-change="fileCheck" :file-list="fileList" :http-request="overwriteSubmit" :auto-upload="false">
+    <el-upload class="upload-demo" ref="uploadRef" action="/api/posts" accept=".doc,.docx,.txt" :data="myData"  :limit="1" :headers="myHeader" :on-exceed="handleExceed" :on-change="fileCheck" :file-list="fileList" :http-request="overwriteSubmit" >
         <el-button size="small" type="primary">点击上传稿件文件</el-button>
         <div slot="tip" class="el-upload__tip">上传文件不能大于5M</div>
     </el-upload>
@@ -40,16 +40,18 @@ export default {
         overwriteSubmit(e) {
             let combinedObj = Object.assign({}, this.$refs.contentForm, this.$refs.infoForm, this.fileList)
             let formData = new FormData()
+            // console.log(e.file)
             formData.append("file", e.file)
             // formData.append("info",JSON.stringify(combinedObj))     //必须上传了文件才能触发
             let config = { //设置了header所以不能放置其它参数?
                 headers: {
-                    "Content-Type": "multipart/form-data",
+                    "Content-Type": 'multipart/form-data;charset="utf-8"',
                     "username": this.username, //用于操作数据库
                     "uid":JSON.stringify(this.fileList[0].uid)
                 }
             }
             // console.log(this.fileList[0].uid)
+            // console.log(formData)
             this.$http.put('/api/filesOp/posts', formData, config).then(res => { //上传文件,及文件的处理接口
                 console.log(res)
             })
