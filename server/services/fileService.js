@@ -87,7 +87,9 @@ let infoPath = path.join(__dirname,`../uploads`) +`/${username}` + `/info/`
 // console.log(fs.existsSync(infoPath))
 // console.log(infoPath)
 if(fs.existsSync(infoPath) == false){
-  fs.mkdirSync(`./uploads/${username}/`)         //要一层一层创建,不能直接创建两个目录
+  if(fs.existsSync(`./uploads/${username}/`)==false){
+    fs.mkdirSync(`./uploads/${username}/`)  
+  }    //要一层一层创建,不能直接创建两个目录
   fs.mkdirSync(`./uploads/${username}/info/`)
 }
 let time = sd.format(new Date(),'YYYYMMDDHHmmss')  //是否可以封装?
