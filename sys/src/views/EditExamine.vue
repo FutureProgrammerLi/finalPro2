@@ -1,6 +1,6 @@
 <template>
 <div id="try" style="height:100%">
-    <!-- <el-button @click="test">test</el-button> -->
+    <el-button @click="test">test</el-button>
     <el-card class="box-card">
         <el-form :model="rebuildObj" label-width="180px">
             <el-form-item label="标题:" prop="title">
@@ -15,8 +15,8 @@
             <el-form-item label="正文:" prop="content">
                 <el-input type="textarea" :rows="7" v-model="rebuildObj.content" readonly></el-input>
             </el-form-item>
-            <el-form-item label="文件内容:" v-if="content[0] != undefined" >
-                <el-input type="textarea" :rows="7" v-model="content.fileContent" readonly></el-input>
+            <el-form-item label="文件内容:" v-if="content.utfContent" prop="utfContent" >
+                <el-input type="textarea" :rows="7" v-model="content.utfContent" readonly></el-input>
             </el-form-item>
             <el-form-item v-if="content[0] != undefined">
                 <el-button type="text" @click="download(content[0].uid)">下载稿件文件</el-button>
@@ -39,17 +39,17 @@
         </el-form>
         <el-form :model="commentForm" label-width="180px" :rules="rules">
             <el-form-item label="审核评论:" prop="comment">
-            <el-input type="textarea" :row="7" v-model="commentForm.comment"></el-input>
+                <el-input type="textarea" :row="7" v-model="commentForm.comment"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="check('passed')">通过</el-button>
                 <el-button type="danger" @click="check('unpassed')">不通过</el-button>
                 <el-button @click="goBack">返回</el-button>
             </el-form-item>
-            
+
         </el-form>
     </el-card>
-    
+
     <div v-show="false">{{this.filterObj}}</div>
 </div>
 </template>
@@ -59,22 +59,22 @@ export default {
     name: 'EditExamine',
     data() {
         return {
-            id:'',
+            id: '',
             content: '',
             rebuildObj: {},
-            commentForm:{
-                comment:''
+            commentForm: {
+                comment: ''
             },
-            state:'',
-            rules:{
-               comment: [{
-                    required:true,
-                    message:'请填写审核意见',
-                    trigger:'blur'
-                },{
-                    max:300,
-                    message:'请输入300字以下的审核意见',
-                    trigger:'blur'
+            state: '',
+            rules: {
+                comment: [{
+                    required: true,
+                    message: '请填写审核意见',
+                    trigger: 'blur'
+                }, {
+                    max: 300,
+                    message: '请输入300字以下的审核意见',
+                    trigger: 'blur'
                 }]
             }
         }
@@ -90,41 +90,49 @@ export default {
         },
         download(uid) {
             this.$http.get(`/api/filesOp/sendFiles/${uid}`).then(res => {
-                if(res.status == 200){
-                let url = window.URL.createObjectURL(new Blob([res.data])) //创建下载链接
-                let link = document.createElement('a') //创建a标签
-                link.style.display = 'none' //将a标签隐藏
-                link.href = url //给a标签添加下载链接
-                link.setAttribute('download', this.rebuildObj[0].name) // 此处注意，要给a标签添加一个download属性，属性值就是文件名称 否则下载出来的文件是没有属性的，空白白
-                document.body.appendChild(link)
-                // console.log(link)
-                link.click() //执行a标签 怎么指定
-                }else{
+                if (res.status == 200) {
+                    // console.log(res.data.toString('gbk'))
+                    
+                    let url = window.URL.createObjectURL(new Blob([res.data],{type:'text/plain,charset=UTF-8'})) //创建下载链接
+                    let link = document.createElement('a') //创建a标签
+                    link.style.display = 'nonbe' //将a标签隐藏
+                    link.href = url //给a标签添加下载链接
+                    link.setAttribute('download', this.rebuildObj[0].name) // 此处注意，要给a标签添加一个download属性，属性值就是文件名称 否则下载出来的文件是没有属性的，空白白
+                    document.body.appendChild(link)
+                    // console.log(link)
+                    link.click() //执行a标签 怎么指定
+                } else {
                     this.$message.error('下载失败')
                 }
             })
         },
-        check(state){
+        check(state) {
             // console.log(state,typeof state)
-        this.state = state
-        let paramsObj = {
-            commentator:this.$store.state.userInfo.username,  //审核人员?有无必要?
-            username:this.$route.params.info.username, //作者名称
-            comment:this.commentForm.comment,
-            infoid:this.id,
-            title:this.content.title    //用来指示答复标题
-        }
-        // this.$store.dispatch('commentsInsert',paramsObj)
-        this.$http.get(`/api/examine/changeState/${this.id}/${this.state}`).then(res=>{
-            if(res.data.status === 200){
-                this.$store.dispatch('commentsInsert',paramsObj)
-                this.$router.push('/examine')
-            }else {
-                this.$message.error('修改稿件状态失败')
+            if (this.commentForm.comment != '' || this.commentForm.comment.length < 300) {
+                // console.log(this.commentForm.comment.length )
+                this.state = state
+                let paramsObj = {
+                    commentator: this.$store.state.userInfo.username, //审核人员?有无必要?
+                    username: this.$route.params.info.username, //作者名称
+                    comment: this.commentForm.comment,
+                    infoid: this.id,
+                    title: this.content.title //用来指示答复标题
+                }
+                // this.$store.dispatch('commentsInsert',paramsObj)
+                this.$http.get(`/api/examine/changeState/${this.id}/${this.state}`).then(res => {
+                    if (res.data.status === 200) {
+                        this.$store.dispatch('commentsInsert', paramsObj)
+                        this.$router.push('/examine')
+                    } else {
+                        this.$message.error('修改稿件状态失败')
+                    }
+                })
+            }else{
+                this.$message.error('请输入评审意见')
             }
-        })
+
         },
-        goBack(){
+        goBack() {
             this.$router.push('/examine')
         }
     },
@@ -134,29 +142,30 @@ export default {
         this.id = this.$route.params.id
     },
     beforeMount() {
-        
+
         for (const i in this.content) {
 
             this.rebuildObj[i] = this.content[i]
             // console.log(i)
         }
-        return 
+        return
         // Object.keys(this.content).forEach(i => {
         //     console.log(i)
         //     // if (i != 'username' && i != 'kind' && i != 'draftToPost') {
         //     //     this.rebuildObj[i] = this.content[i] //用来隐藏信息
         //     // }
         // })
-    //     console.log(this.rebuildObj)
-    // }
+        //     console.log(this.rebuildObj)
+        // }
     }
 }
 </script>
 
 <style scoped>
-#try{
-    overflow:auto;
+#try {
+    overflow: auto;
 }
+
 .el-input {
     width: 40%;
 }
@@ -164,9 +173,11 @@ export default {
 .el-textarea {
     width: 80%;
 }
-.el-card{
-    overflow:auto;
+
+.el-card {
+    overflow: auto;
 }
+
 .el-card::-webkit-scrollbar {
     width: 10px;
     height: 10px;

@@ -1,6 +1,7 @@
 const connection = require('../db/conn')
 const fs = require('fs')
 const path = require('path')
+const iconv = require('iconv-lite')
 
 exports.returnList = function(req,res,next){
 let {roleid} = req.params
@@ -60,9 +61,14 @@ exports.returnContent = function(req,res,next){
          data = JSON.parse(JSON.stringify(data))
          let relPath = data[0].uploadPath
          let combined = path.join(__dirname,`../${relPath}`)
-         let fileContent = fs.readFileSync(combined,'utf-8')
-         let contentObj = Object.assign({},infoContent)  
-         contentObj.fileContent = fileContent
+         let contentObj = Object.assign({},infoContent)
+         // console.log(path.extname(combined),path.extname(combined) == 'txt')
+         if(path.extname(combined) == '.txt'){
+            let fileContent = fs.readFileSync(combined)
+            let utfContent = iconv.decode(fileContent,'gbk')      
+            contentObj.fileContent = fileContent
+            contentObj.utfContent = utfContent
+         }
          res.status(200).send(contentObj)    //信息和文件内容整合在一个对象
       })
    }else{

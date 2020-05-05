@@ -3,8 +3,6 @@ const fs = require('fs')
 const path = require('path')
 const formidable = require('formidable')
 const sd = require('silly-datetime')
-const iconv= require('iconv-lite')
-const BufferHelper = require('bufferhelper')
 
 exports.upload = function(req,res,next){
     let {username,uid} = req.headers
@@ -19,7 +17,6 @@ exports.upload = function(req,res,next){
     let form = new formidable.IncomingForm();
     form.uploadDir = worksPath
     form.keepExtensions = true
-    form.encoding = 'utf-8'
     form.parse(req,(err,fields,files)=>{
         if(err){
           res.send(err)
@@ -37,9 +34,9 @@ exports.upload = function(req,res,next){
           throw Error('改名失败')
         }
       })
+      
+      // console.log(buff)
       let relativePath = `/uploads/${username}/works/` + time + random + extent
-      // let content = fs.readFileSync(path.join(__dirname,`../${relativePath}`))
-      // console.log(path.join(__dirname,`../${relativePath}`))
       const sql = `insert into uploadpath(username , uploadPath,uid) values('${username}', '${relativePath}','${uid}')`
         connection.query(sql,(err,data)=>{
           if(err){
@@ -57,7 +54,7 @@ exports.upload = function(req,res,next){
 }
 
 exports.fileInfo = function(req,res,next){
-console.log(req.body)
+// console.log(req.body)
 let {username,kind,title,draftToPost,id} = req.body
 if(draftToPost && id){                 //在草稿箱里面投稿,有id才找,无则创建信息文件,用于区分新建的和已有的草稿
   //将文本信息的kind设置为post
@@ -110,7 +107,7 @@ fs.writeFile(combined,info,(err)=>{
 }
 
 exports.sendFiles = function(req,res,next){
-  console.log(req.params)
+  // console.log(req.params)
   let {uid} = req.params
   const search = `select uploadPath from uploadpath where uid='${uid}';`
   connection.query(search,(err,data)=>{
@@ -121,6 +118,7 @@ exports.sendFiles = function(req,res,next){
     let relPath = data[0].uploadPath
     let absPath = path.join(__dirname,`../${relPath}`)
     console.log(absPath)
+    // res.send(absPath)
     res.sendFile(absPath,{
       headers:{
         "content-type":"blob"

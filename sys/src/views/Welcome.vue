@@ -79,18 +79,12 @@ export default {
         ...mapState(['sessions','userInfo','userlist','to_username'])
     },
     sockets: {
-        connect() {
-            console.log('连接成功')
-        },
-        receiveMsg(res) {
-            this.sessions.push(res)
-            // console.log(this.sessions)
-        }
+        
     },
     created() {
         this.$store.dispatch('asyncGetList',this.$store.state.userInfo.roleid)
         this.$store.dispatch('getComment',this.$store.state.userInfo.username)
-        this.$socket.emit('regis',this.$store.state.userInfo.username)
+        
     },
     mounted(){
         // this.$socket.emit('regis',this.$store.state.userInfo.username)

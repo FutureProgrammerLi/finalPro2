@@ -15,7 +15,7 @@
             <message :username="username" />
         </keep-alive>
         <inputBox @sendMessage="testClientEmit" :username="username" />
-        
+
         <!-- <div class="text">
             <textarea placeholder="按 Ctrl + Enter 发送" v-model="content"></textarea>
         </div> -->
@@ -30,7 +30,10 @@ import list from '../components/chat/list'
 import message from '../components/chat/message'
 import inputBox from '../components/chat/inputBox'
 import a from '../services/GetDate'
-import { mapState , mapGetters } from 'vuex'
+import {
+    mapState,
+    mapGetters
+} from 'vuex'
 
 export default {
     name: "Chat",
@@ -43,15 +46,16 @@ export default {
     created() {
         // this.initData();
         this.$store.dispatch('asyncGetUserList')
-        this.$store.dispatch('getComment',this.$store.state.userInfo.username)
+        this.$store.dispatch('getComment', this.$store.state.userInfo.username)
+        this.$socket.emit('regis',this.$store.state.userInfo.username)
     },
     mounted() {
-        this.$socket.emit('connect')  
+        this.$socket.emit('connect')
         this.$store.dispatch('asyncGetSessions', this.userInfo.username)
     },
-   
+
     computed: {
-        ...mapState(['sessions','userInfo']),
+        ...mapState(['sessions', 'userInfo']),
     },
     data() {
         return {
@@ -61,7 +65,13 @@ export default {
         }
     },
     sockets: {
-
+        connect() {
+            console.log('连接成功')
+        },
+        receiveMsg(res) {
+            this.sessions.push(res)
+            // console.log(this.sessions)
+        }
     },
     methods: {
         testClientEmit(content) {
@@ -71,7 +81,7 @@ export default {
                 to_user: this.to,
                 content: content,
                 senttime: a.getDate(),
-                avatar:this.$store.state.userInfo.avatar
+                avatar: this.$store.state.userInfo.avatar
             }
             this.$socket.emit('sendMsg', JSON.stringify(contentObj))
         },
@@ -97,8 +107,8 @@ export default {
         test() {
             console.log(this.sessions)
         },
-        beforeDestroy(){
-          sessionStorage.setItem('sessions',this.sessions)
+        beforeDestroy() {
+            sessionStorage.setItem('sessions', this.sessions)
         }
     }
 }
@@ -140,8 +150,6 @@ export default {
     .message {
         height: ~'calc(100% - 160px)';
     }
-
-    
 
 }
 

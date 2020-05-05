@@ -42,13 +42,14 @@ export default {
     methods: {
         dealWithScope() {},
         handleEdit(index, row) {
-            console.log(index,row)
+            // console.log(index,row)
             this.$http.get(`/api/examine/getExamineContent`, {
                 params: {
                     path: row.path
                 }
             }).then(res => {
-                console.log(res.status)
+                // console.log(res.status)
+                console.log(res)
                 if (res.status === 200) {
                     this.$router.push({
                         name: 'EditExamine',

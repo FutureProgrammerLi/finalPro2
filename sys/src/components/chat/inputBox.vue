@@ -31,7 +31,7 @@ export default {
                 // console.log(this.$store.state.sessions)
                 
             }
-           console.log(this.isEmpty,this.username)
+        //    console.log(this.isEmpty,this.username)
         },
         test(){
              console.log(this.isEmpty)
