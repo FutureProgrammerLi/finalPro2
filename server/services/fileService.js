@@ -120,16 +120,16 @@ exports.sendFiles = function(req,res,next){
     data = JSON.parse(JSON.stringify(data))
     let relPath = data[0].uploadPath
     let absPath = path.join(__dirname,`../${relPath}`)
-    let content = fs.readFileSync(absPath)
     // console.log(content)
     // console.log(absPath,content)
     console.log(path.extname(absPath))
-    if(path.extname(absPath) == '.txt' && false){
+    if(path.extname(absPath) == '.txt'){
+      let content = fs.readFileSync(absPath)
       let utfContent = iconv.decode(content,'gbk')
       console.log('1')
       res.send(utfContent)   
     }else{
-      console.log('2')
+      // console.log(absPath)
       // res.sendFile(absPath)
       res.sendFile(absPath,{
         headers:{
