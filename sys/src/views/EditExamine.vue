@@ -91,11 +91,11 @@ export default {
         download(uid) {
             this.$http.get(`/api/filesOp/sendFiles/${uid}`).then(res => {
                 if (res.status == 200) {
-                    // console.log(res.data.toString('gbk'))
+                    console.log(res.data)
                     
-                    let url = window.URL.createObjectURL(new Blob([res.data],{type:'text/plain,charset=UTF-8'})) //创建下载链接
+                    let url = window.URL.createObjectURL(new Blob([res.data])) //创建下载链接
                     let link = document.createElement('a') //创建a标签
-                    link.style.display = 'nonbe' //将a标签隐藏
+                    link.style.display = 'none' //将a标签隐藏
                     link.href = url //给a标签添加下载链接
                     link.setAttribute('download', this.rebuildObj[0].name) // 此处注意，要给a标签添加一个download属性，属性值就是文件名称 否则下载出来的文件是没有属性的，空白白
                     document.body.appendChild(link)

@@ -14,8 +14,8 @@
         <keep-alive>
             <message :username="username" />
         </keep-alive>
-        <inputBox @sendMessage="testClientEmit" :username="username" />
-
+            <inputBox @sendMessage="testClientEmit" :username="username" />
+        
         <!-- <div class="text">
             <textarea placeholder="按 Ctrl + Enter 发送" v-model="content"></textarea>
         </div> -->
@@ -47,7 +47,7 @@ export default {
         // this.initData();
         this.$store.dispatch('asyncGetUserList')
         this.$store.dispatch('getComment', this.$store.state.userInfo.username)
-        this.$socket.emit('regis',this.$store.state.userInfo.username)
+        this.$socket.emit('regis', this.$store.state.userInfo.username)
     },
     mounted() {
         this.$socket.emit('connect')

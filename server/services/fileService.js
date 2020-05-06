@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const formidable = require('formidable')
 const sd = require('silly-datetime')
+const iconv = require('iconv-lite')
 
 exports.upload = function(req,res,next){
     let {username,uid} = req.headers
@@ -29,14 +30,15 @@ exports.upload = function(req,res,next){
       let random = parseInt(Math.random() * 89999 +10000)
       let extent = path.extname(files.file.name)
       let newPath = worksPath + time + random + extent
-      fs.rename(files.file.path,newPath,(err)=>{
+      fs.renameSync(files.file.path,newPath,(err)=>{
         if(err){
           throw Error('改名失败')
         }
       })
-      
-      // console.log(buff)
+      // console.log(newPath)
+      // console.log(fs.readFile(newPath),fs.readFileSync(newPath))
       let relativePath = `/uploads/${username}/works/` + time + random + extent
+      
       const sql = `insert into uploadpath(username , uploadPath,uid) values('${username}', '${relativePath}','${uid}')`
         connection.query(sql,(err,data)=>{
           if(err){
@@ -51,6 +53,7 @@ exports.upload = function(req,res,next){
           }
         })
       })
+      
 }
 
 exports.fileInfo = function(req,res,next){
@@ -117,14 +120,24 @@ exports.sendFiles = function(req,res,next){
     data = JSON.parse(JSON.stringify(data))
     let relPath = data[0].uploadPath
     let absPath = path.join(__dirname,`../${relPath}`)
-    console.log(absPath)
-    // res.send(absPath)
-    res.sendFile(absPath,{
-      headers:{
-        "content-type":"blob"
+    let content = fs.readFileSync(absPath)
+    // console.log(content)
+    // console.log(absPath,content)
+    console.log(path.extname(absPath))
+    if(path.extname(absPath) == '.txt' && false){
+      let utfContent = iconv.decode(content,'gbk')
+      console.log('1')
+      res.send(utfContent)   
+    }else{
+      console.log('2')
+      // res.sendFile(absPath)
+      res.sendFile(absPath,{
+        headers:{
+          "content-type":"blob"
+        }
       }
+    )
     }
-  )
   })
 }
 

@@ -65,8 +65,7 @@ exports.returnContent = function(req,res,next){
          // console.log(path.extname(combined),path.extname(combined) == 'txt')
          if(path.extname(combined) == '.txt'){
             let fileContent = fs.readFileSync(combined)
-            let utfContent = iconv.decode(fileContent,'gbk')      
-            contentObj.fileContent = fileContent
+            let utfContent = iconv.decode(fileContent,'gbk')
             contentObj.utfContent = utfContent
          }
          res.status(200).send(contentObj)    //信息和文件内容整合在一个对象
