@@ -122,8 +122,12 @@ exports.sendFiles = function(req,res,next){
     data = JSON.parse(JSON.stringify(data))
     let relPath = data[0].uploadPath
     let absPath = path.join(__dirname,`../${relPath}`)
-    let content = fs.readFileSync(absPath)
     if(path.extname(absPath) == '.txt' ){
+    // console.log(content)
+    // console.log(absPath,content)
+    // console.log(path.extname(absPath))
+    if(path.extname(absPath) == '.txt'){
+      let content = fs.readFileSync(absPath)
       let utfContent = iconv.decode(content,'gbk')
       res.send(utfContent)   
     }else if(path.extname(absPath) == '.docx' || path.extname(absPath) == '.doc'){
@@ -134,7 +138,8 @@ exports.sendFiles = function(req,res,next){
     }else{
       res.status(500).send({status:500,msg:'服务器出错'})
     }
-  })
+  }
+})
 }
 
 exports.avatarUpload = function(req,res,next){      //上传头像
