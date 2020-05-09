@@ -4,7 +4,7 @@
         <el-aside :width="isCollapse?'64px':'200px'">
             <el-scrollbar wrap-class="scrollbar-wrapper">
                 <div id="topic"> 在线投稿系统</div>
-                <el-menu class="el-menu-vertical-demo" default-active="/info" :collapse="isCollapse" :unique-opened="true" :collapse-transition="false" router  text-color="#000" active-text-color="#1574E8">
+                <el-menu class="el-menu-vertical-demo" :default-active="active" @select="handleSelect($event)" :collapse="isCollapse" :unique-opened="true" :collapse-transition="false" router  text-color="#000" active-text-color="#1574E8">
                     <el-menu-item :index="item.path" v-for="item in $store.state.menuList" :key="item.id">
                         <i :class="iconObj[item.authName]"></i>
                         <span slot="title"> {{item.authName}}</span>
@@ -47,6 +47,7 @@ export default {
     },
     data() {
         return {
+            active:'/info',
             isCollapse: false,
             iconObj: {      //毫无可复用性..
                 '个人主页': 'el-icon-s-home',
@@ -69,6 +70,9 @@ export default {
             let topic = document.getElementById('topic')
             this.isCollapse?topic.style.display = "none":topic.style.display ='block'
         },
+        handleSelect(e){
+         this.active = e
+        },
         test(){
         //    this.$socket.emit('disconnect')
            this.$socket.disconnect()
@@ -88,7 +92,7 @@ export default {
     },
     mounted(){
         // this.$socket.emit('regis',this.$store.state.userInfo.username)
-    },
+    }
     // beforeDestroy(){
     //     this.$socket.disconnect()
     // }

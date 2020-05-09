@@ -36,8 +36,8 @@ export default {
         }
         return {
             loginForm: {
-                username: 'admin',  //zhanghao
-                password: 'asdf456'   //zheshimima123
+                username: '',  
+                password: ''   
             },
             loginFormRules: { //避免输入框开头有*
                 username: [{
