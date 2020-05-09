@@ -10,6 +10,12 @@
             </el-table-column>
             <el-table-column label="上传日期" prop="date" sortable>
             </el-table-column>
+            <el-table-column label="是否附带文件" prop="file" sortable>
+                <template slot-scope="scope">
+                    <el-tag v-if="scope.row.file=='true'" type="plain">是</el-tag>
+                    <el-tag v-else type="plain">否</el-tag>
+                </template>
+            </el-table-column>
             <el-table-column align="right">
                 <template slot="header" slot-scope="scope">
                     <el-input v-model="search" size="mini" placeholder="输入关键字搜索" @blur="dealWithScope(scope)" />

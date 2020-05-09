@@ -6,8 +6,8 @@ const iconv = require('iconv-lite')
 exports.returnList = function(req,res,next){
 let {roleid} = req.params
 if(roleid < 2){     //判断身份
-     const sql1 = `select * from infopath where type='post' and state='todo';`
-     const sql2 = `select count(*) as total from infopath where type='post' and state='todo';`
+     const sql1 = `select * from infopath where type='post' and state='todo';`  //list
+     const sql2 = `select count(*) as total from infopath where type='post' and state='todo';` //total
      var sentObj = {}
      sentObj.tableData = []
      connection.query(sql1,(err,data1)=>{ //返回投稿,todo的信息

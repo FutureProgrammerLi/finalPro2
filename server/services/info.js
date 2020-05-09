@@ -1,5 +1,6 @@
 const connection = require('../db/conn')
-
+const fs = require('fs')
+const path = require('path')
 exports.test = function(req,res,next){
     res.send('test service')
 }
@@ -121,6 +122,22 @@ exports.returnSessionList = (req,res,next)=>{
     })
 }
 
+exports.returnPosts = (req,res,next)=>{
+    // console.log(req.params)
+    let {id} = req.params
+    const sql = `select path from infopath where id='${id}';`
+    connection.query(sql,(err,data)=>{
+        if(err){
+            throw err
+        }
+        let relPath = data[0].path
+        let fileContent = fs.readFileSync(path.join(__dirname,`../${relPath}`),'utf-8')
+        fileContent = JSON.parse(fileContent)
+        let {title,summary,summaryInEnglish,content} = fileContent
+        let retObj = {title,summary,summaryInEnglish,content}
+        res.send(retObj)
+    })
+}
 
     // const sql1 = `select id,username,avatar,content,senttime,state from userlist as A inner join (select to_user,content,senttime,state from msgtable) as B on A.username = B.to_user;`
     // //找到id,username,avatar,content,senttime和state

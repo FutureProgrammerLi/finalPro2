@@ -4,6 +4,7 @@ const path = require('path')
 const formidable = require('formidable')
 const sd = require('silly-datetime')
 const iconv = require('iconv-lite')
+const mammoth = require('mammoth')
 
 exports.upload = function(req,res,next){
     let {username,uid} = req.headers
@@ -58,7 +59,8 @@ exports.upload = function(req,res,next){
 
 exports.fileInfo = function(req,res,next){
 // console.log(req.body)
-let {username,kind,title,draftToPost,id} = req.body
+let {username,kind,title,draftToPost,id,withFile} = req.body
+// console.log(withFile)
 if(draftToPost && id){                 //在草稿箱里面投稿,有id才找,无则创建信息文件,用于区分新建的和已有的草稿
   //将文本信息的kind设置为post
   const sql = `select path from infopath where id='${id}'`
@@ -102,7 +104,7 @@ fs.writeFile(combined,info,(err)=>{
   if(err){
     res.send({status:400,msg:"信息文件写入失败"})
   }
-  const sql = `insert into infopath(username,title, path , type) values('${username}','${title}', '${relativePath}' , '${kind}');`
+  const sql = `insert into infopath(username,title, path , type , file) values('${username}','${title}', '${relativePath}' , '${kind}' , '${withFile}');`
   connection.query(sql,err2=>{if(err2)throw err2})
   res.send({status:201,msg:"信息文件写入成功"})
 })  
@@ -121,22 +123,16 @@ exports.sendFiles = function(req,res,next){
     let relPath = data[0].uploadPath
     let absPath = path.join(__dirname,`../${relPath}`)
     let content = fs.readFileSync(absPath)
-    // console.log(content)
-    // console.log(absPath,content)
-    console.log(path.extname(absPath))
-    if(path.extname(absPath) == '.txt' && false){
+    if(path.extname(absPath) == '.txt' ){
       let utfContent = iconv.decode(content,'gbk')
-      console.log('1')
       res.send(utfContent)   
+    }else if(path.extname(absPath) == '.docx' || path.extname(absPath) == '.doc'){
+      mammoth.extractRawText({path:`./${relPath}`}).then(result=>{
+        let text = result.value
+        res.send(text)
+      })
     }else{
-      console.log('2')
-      // res.sendFile(absPath)
-      res.sendFile(absPath,{
-        headers:{
-          "content-type":"blob"
-        }
-      }
-    )
+      res.status(500).send({status:500,msg:'服务器出错'})
     }
   })
 }

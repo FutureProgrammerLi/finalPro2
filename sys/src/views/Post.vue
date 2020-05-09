@@ -67,10 +67,12 @@ export default {
                 combinedObj.username = this.username
                 combinedObj.kind = 'post'
                 combinedObj.draftToPost = false
+                combinedObj.withFile = false
                 // console.log(combinedObj)
                 if (combinedObj[0]) { //判断是否有上传文件
                     this.$refs.fileupload.$refs.uploadRef.submit() //有就触发overwriteSubmit
                     // delete combinedObj[0] //为什么要删除?存储了文件信息和表单信息
+                    combinedObj.withFile = true
                 }
                 // console.log(combinedObj)
                 this.$http.put('/api/filesOp/fileInfo', combinedObj).then(res => { //处理表格信息

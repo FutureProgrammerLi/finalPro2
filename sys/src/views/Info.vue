@@ -141,6 +141,31 @@
         </span>
     </el-dialog>
 
+    <el-dialog :visible.sync="postDialog" width="40%" title="投稿信息">
+        <el-form :model="postInfo" label-width="80px" id="postInfoForm">
+            <el-form-item label="标题:">
+                <el-input v-model="postInfo.title" readonly></el-input>
+            </el-form-item>
+            <el-form-item label="摘要:">
+                <el-input readonly v-model="postInfo.summary"></el-input>
+            </el-form-item>
+            <el-form-item label="英文摘要:">
+                <el-input readonly v-model="postInfo.summaryInEnglish"></el-input>
+            </el-form-item>
+            <el-form-item label="正文:">
+                <el-input readonly type="textarea" :row="8" v-model="postInfo.content"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="postDialog = false">返 回</el-button>
+        </span>
+        <!-- <el-form :model="postInfo" label-width="80px;" >
+        <el-form-item label="标题">
+          <el-input :model="postInfo.title">{{postInfo.title}}</el-input>
+        </el-form-item>
+
+    </el-form> -->
+    </el-dialog>
 </div>
 </template>
 
@@ -226,9 +251,11 @@ export default {
                 email: '',
                 phone: ''
             },
+            postInfo: {},
             username: this.$store.state.userInfo.username,
             infoDialog: false,
             pwdDialog: false,
+            postDialog: false,
             checkRules: {
                 oldPass: [{
                     validator: oldPwdCheck,
@@ -375,24 +402,34 @@ export default {
             })
         },
         show(info) {
-            console.log(info)
+            this.postDialog = true
+            this.$http.get(`/api/getSelfPosts/${info.id}`).then(res => {
+                if (res.status === 200) {
+                    this.postInfo = res.data
+                    console.log(this.postInfo)
+                }
+            })
         },
         withdraw(id) {
             this.$confirm('退稿后稿件将保存在草稿箱,您确定要退稿吗?', '提示', {
-                confirmText: '确定',
-                cancelText: '取消',
-                type: 'warning'
-            }).then(
-                this.$http.delete(`/api/filesOp/withdraw/${id}`).then(res => {
-                    if (res.data.status === 200) {
-                        this.$message.success('退稿成功!')
-                        this.$store.dispatch('asyncGetUploadDetails', this.$store.state.userInfo.username)
-                    } else {
-                        this.$message.error('退稿时出现错误!')
-                    }
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
                 })
-            )
-              .catch(()=>{})
+                .then(() => {
+                    // console.log('submit')
+                    this.$http.delete(`/api/filesOp/withdraw/${id}`).then(res => {
+                        if (res.data.status === 200) {
+                            this.$message.success('退稿成功!')
+                            this.$store.dispatch('asyncGetUploadDetails', this.$store.state.userInfo.username)
+                        } else {
+                            this.$message.error('退稿时出现错误!')
+                        }
+                    })
+                })
+                .catch(() => {
+                    // console.log('test')
+                })
         }
     },
     computed: {
@@ -470,5 +507,9 @@ export default {
 .postinfo {
     height: 30vh;
     overflow: auto;
+}
+
+#postInfoForm.input {
+    width: 50%;
 }
 </style>

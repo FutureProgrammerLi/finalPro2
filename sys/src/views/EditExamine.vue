@@ -1,6 +1,6 @@
 <template>
 <div id="try" style="height:100%">
-    <el-button @click="test">test</el-button>
+    <!-- <el-button @click="test">test</el-button> -->
     <el-card class="box-card">
         <el-form :model="rebuildObj" label-width="180px">
             <el-form-item label="标题:" prop="title">
@@ -46,7 +46,6 @@
                 <el-button type="danger" @click="check('unpassed')">不通过</el-button>
                 <el-button @click="goBack">返回</el-button>
             </el-form-item>
-
         </el-form>
     </el-card>
 
@@ -91,7 +90,7 @@ export default {
         download(uid) {
             this.$http.get(`/api/filesOp/sendFiles/${uid}`).then(res => {
                 if (res.status == 200) {
-                    console.log(res.data)
+                    // console.log(res.data)
                     
                     let url = window.URL.createObjectURL(new Blob([res.data])) //创建下载链接
                     let link = document.createElement('a') //创建a标签
@@ -142,9 +141,7 @@ export default {
         this.id = this.$route.params.id
     },
     beforeMount() {
-
         for (const i in this.content) {
-
             this.rebuildObj[i] = this.content[i]
             // console.log(i)
         }

@@ -84,12 +84,14 @@ export default {
                 combinedObj.username = this.$store.state.userInfo.username
                 combinedObj.kind = 'post'
                 combinedObj.draftToPost = true
+                combinedObj.withFile = false
                 if (JSON.stringify(this.$route.params) != '{}') {
                     combinedObj.id = this.$route.params.info.id
                 }
                 if (combinedObj[0] != 'undefined') { //判断是否有上传文件
                     this.$refs.fileupload.$refs.uploadRef.submit() //有就触发overwriteSubmit
                     // delete combinedObj[0] //为什么要删除?存储了文件信息和表单信息
+                    combinedObj.withFile = true
                 }
                 // console.log(combinedObj)
                 this.$http.put('/api/filesOp/fileInfo', combinedObj).then(res => { //处理表格信息
