@@ -24,6 +24,7 @@ export default new Vuex.Store({
     uploadInfo:'',
     sessions:localStorage.getItem('sessions') ?localStorage.getItem('sessions'):[],
     userlist:[],
+    allUsers:[],
     currentID:0,
     filterKey:''
   },
@@ -74,6 +75,9 @@ export default new Vuex.Store({
     },
     getAnnounceList(state,list){
       state.announceList = list
+    },
+    setAllUsers(state,allUsers){
+      state.allUsers = allUsers
     },
     SELECT_SECTION(state,id){
       state.currentID = id 
@@ -184,7 +188,15 @@ export default new Vuex.Store({
       inputSearch(context,value){
         context.commit('SET_FILTER_KEY',value)
       },
-
+      asyncGetUsers(context,id){
+        if(id === 0){
+          axios.get(`/api/getAllUsers/${id}`).then(res=>{
+            if(res.status === 200){
+              context.commit('setAllUsers',res.data)
+            }
+          })
+        }
+      }
   },
   modules: {
   },

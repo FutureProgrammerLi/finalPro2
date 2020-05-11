@@ -13,5 +13,7 @@ router.get('/query',userService.query)
 
 router.put('/updateRoleList',userService.updateRoleList)
 
+router.get('/changeState/:id/:op',userService.changeUserState)
 
+router.get('/changeIdentity/:id/:roleid',userService.changeIdentity)
 module.exports = router;

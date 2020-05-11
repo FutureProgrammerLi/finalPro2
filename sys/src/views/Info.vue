@@ -62,7 +62,7 @@
         <div slot="header">
             投稿详情:
         </div>
-        <el-table :data="postList" stripe border style="width: 100%;overflow:hidden;">
+        <el-table :data="postList" stripe border style="width: 100%;overflow:hidden;" height="250">
             <el-table-column prop="title" label="稿件标题" width="300">
             </el-table-column>
             <el-table-column prop="date" label="上传日期" align="center">
@@ -85,7 +85,7 @@
 
     <!-- 公告卡片 -->
     <el-card class="announce-card">
-        <el-table :data="announceList" stripe border style="width: 100%;overflow:hidden;">
+        <el-table :data="announceList" stripe border style="width: 100%;overflow:hidden;" height="250">
             <el-table-column prop="title" label="公告标题" width="300">
             </el-table-column>
             <el-table-column prop="ptime" label="发布日期" align="center">

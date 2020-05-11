@@ -18,8 +18,9 @@ connection.query(querysql,(err,querydata)=>{
           res.send(err)
       }
       let result = JSON.parse(JSON.stringify(querydata))
-    //   console.log(result)
-      if(result.length != 0){          
+         if(result[0].state === 'banned'){
+             res.send({status:401,msg:'用户已被禁用,请联系管理员!'})
+         } else if(result.length != 0 && result[0].state == 'active'){          
          //登录成功,根据id生成token并返回
             let jwt = new jwtUtil(result[0].id)
             let token = jwt.genToken()
@@ -37,10 +38,9 @@ connection.query(querysql,(err,querydata)=>{
 
 //注册功能
 exports.signup = function(req,res){
-let {username,password,email,phone} = req.body
-const sql1 = `insert into userlist(username , password , email , phone) values('${username}', '${password}' , '${email}' ,'${phone}');`
-const sql2 = `insert into uploadinfo(username) value('${username}');`
-connection.query(sql1 , sql2,  (err,data)=>{
+let {username,password,email,phone,identity=2} = req.body
+const sql1 = `insert into userlist(roleid , username , password , email , phone  ) values('${identity}' ,'${username}', '${password}' , '${email}' ,'${phone}');`
+connection.query(sql1,(err,data)=>{
     if(err){
         res.send(err) //res.send({"status":"403","msg":"登录已过期,请重新登录"})
     }
@@ -91,3 +91,33 @@ exports.updateRoleList = function(req,res){
     })
 }
 
+exports.changeUserState = function(req,res){
+    let {id,op} = req.params
+    const sql = `update userlist set state='${op}' where id=${id};`
+    connection.query(sql,(err,result)=>{
+        if(err){
+            throw err
+        }
+        if(result.affectedRows === 1){
+            res.send({status:200,msg:'操作成功!'})
+        }else{
+            res.send({status:500,msg:'未知错误'})
+        }
+    })
+}
+
+exports.changeIdentity = function(req,res){
+    // console.log(req.params)
+    let {id,roleid} = req.params
+    const sql = `update userlist set roleid = '${roleid}' where id='${id}';`
+    connection.query(sql,(err,data)=>{
+        if(err){
+            throw err
+        }
+        if(data.affectedRows === 1){
+            res.send({status:200,msg:'身份修改成功'})
+        }else{
+            res.send({status:500,msg:'身份修改失败'})
+        }
+    })
+}

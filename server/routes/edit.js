@@ -6,5 +6,4 @@ router.post('/changePwd',service.changePwd)
 
 router.post('/changeInfo',service.changeInfo)
 
-
 module.exports = router;

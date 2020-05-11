@@ -2,7 +2,7 @@
 <div id="box">
     <el-button type="primary" @click="createDraft">新建草稿</el-button>
     <!-- <el-button @click="test">test</el-button> -->
-<el-table :data="draftList?draftList:[]" stripe border style="width: 100%">
+<el-table :data="draftList?draftList:[]" stripe border style="width: 100%" height="250">
     <el-table-column prop="title" label="稿件标题" width="300">
     </el-table-column>
     <el-table-column prop="date" label="上传日期" align="center">

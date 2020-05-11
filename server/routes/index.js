@@ -21,5 +21,7 @@ router.get('/getUploadDetails/:username',service.returnDetails)
 
 router.get('/getSelfPosts/:id',service.returnPosts)
 
+router.get('/getAllUsers/:id',service.returnAllUsers)
+
 
 module.exports = router;

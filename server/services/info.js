@@ -139,6 +139,22 @@ exports.returnPosts = (req,res,next)=>{
     })
 }
 
+exports.returnAllUsers = (req,res,next)=>{
+    console.log(req.params)
+    let {id} = req.params
+    if(Number(id) === 0){
+        const sql = `select * from userlist;`
+        connection.query(sql,(err,data)=>{
+            if(err){
+                throw err
+            }
+            res.send(data.slice(1))
+        })
+    }else{
+        res.send({status:403,msg:'权限不足!'})
+    }
+}
+
     // const sql1 = `select id,username,avatar,content,senttime,state from userlist as A inner join (select to_user,content,senttime,state from msgtable) as B on A.username = B.to_user;`
     // //找到id,username,avatar,content,senttime和state
     // // const sql1 = `select id,username,avatar from userlist`

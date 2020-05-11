@@ -62,7 +62,9 @@ export default {
                         if (res.data.status === 422) {
                             this.$message.error('账号不存在!')
                             // console.log(this.$store.state.userInfo)
-                        } else {   
+                        } else if (res.data.status === 401){
+                            this.$message.error('账号已被禁用,请联系管理员!')
+                        }else {   
                             if (code.decryptFunc(res.data.password) == this.loginForm.password) {
                                 // console.log(res.data)
                                 this.$message.success('登录成功!')
