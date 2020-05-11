@@ -22,7 +22,7 @@ export default new Vuex.Store({
     commentsNum:0,
     draftContentList:'',
     uploadInfo:'',
-    sessions:localStorage.getItem('sessions') ?localStorage.getItem('sessions'):[],
+    sessions:[],
     userlist:[],
     allUsers:[],
     currentID:0,

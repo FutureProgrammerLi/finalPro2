@@ -31,8 +31,8 @@ export default {
     },
     methods: {
         test(){
-            // console.log(this.sessions)
-            console.log(this.userlist,this.getterSessions)
+            console.log(this.sessions)
+            // console.log(this.userlist,this.getterSessions)
             // console.log(Boolean(this.sessions[0].from_user),this.sessions[0])
         }
     },

@@ -4,9 +4,9 @@
         <img class="avatar" width="40" height="40" :alt="userInfo.username" :src="userInfo.avatar">
         <p class="name">{{userInfo.username}}</p>
     </header>
-    <footer>
+    <!-- <footer>
         <input class="search" type="text" placeholder="search user..." @keyup="onKeyup($event)">
-    </footer>
+    </footer> -->
 </div>
 </template>
 

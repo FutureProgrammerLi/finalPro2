@@ -5,6 +5,7 @@
             <h2 style="padding:0;">投稿须知</h2>
         </div>
         <div>
+            <!-- <el-button @click="test">test</el-button> -->
             <p>1、登陆 </p>
             <p>投稿系统的登录地址是http://xxxx.xxxxx.com 大家可以利用现有的网站账号登录投稿系统（图1）。</p>
             <img src="../assets/login.png" alt="登录图片">
@@ -28,7 +29,12 @@
 
 <script>
 export default {
-    name: "Help"
+    name: "Help",
+    methods: {
+        test() {
+            console.log(this.$store.state.session)
+        }
+    },
 }
 </script>
 

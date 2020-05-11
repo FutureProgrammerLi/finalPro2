@@ -48,7 +48,8 @@
                 </el-select>
             </el-form-item>
             <el-form-item>
-                <el-button @click="submit('addFormRef')">Signup</el-button>
+                <el-button @click="submit('addFormRef')">添 加</el-button>
+                <el-button @click="userLog = false">返 回</el-button>
             </el-form-item>
         </el-form>
     </el-dialog>
