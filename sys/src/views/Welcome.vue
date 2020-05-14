@@ -2,9 +2,11 @@
 <div>
     <el-container>
         <el-aside :width="isCollapse?'64px':'200px'">
-            <el-scrollbar wrap-class="scrollbar-wrapper">
-                <div id="topic"> 在线投稿系统</div>
-                <el-menu class="el-menu-vertical-demo" :default-active="$route.path" :collapse="isCollapse" :unique-opened="true" :collapse-transition="false" router text-color="#000" active-text-color="#1574E8">
+            <el-scrollbar wrap-class="scrollbar-wrapper" style="background-color:#2e2f9b">
+                <div id="topic">
+                    在线投稿系统
+                </div>
+                <el-menu class="el-menu-vertical-demo" :default-active="$route.path" :collapse="isCollapse" :unique-opened="true" :collapse-transition="false" router background-color="#2e2f9b" text-color="white" active-text-color="lightcoral">
                     <el-menu-item :index="item.path" v-for="item in $store.state.menuList" :key="item.id">
                         <i :class="iconObj[item.authName]"></i>
                         <span slot="title"> {{item.authName}}</span>
@@ -116,7 +118,7 @@ div,
 } */
 .el-main {
     overflow: auto;
-    background-color: rgb(187, 247, 255);
+    background-color: #FDF9ED;
     height: auto;
 }
 
@@ -134,10 +136,15 @@ body>.el-container {
 }
 
 #topic {
-    margin: 40px 0;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items:center;
     font-size: 20px;
     font-weight: bold;
-    color: rgb(76, 243, 187)
+    color: white;
+    height:60px;
+    background-color: #2e2f9b;
 }
+
+
 </style>

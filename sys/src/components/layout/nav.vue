@@ -13,9 +13,8 @@
     </el-breadcrumb> -->
     <div id="info">
         <span id="icon" @click="toMsg">
-            <el-badge  :value="unreadMsgs" class="item">
+            <el-badge :value="unreadMsgs != 0 ?unreadMsgs :''" >
                 <i class="el-icon-bell"></i>
-                <!-- <el-button @click="test" icon="el-icon-bell"></el-button> -->
             </el-badge>
         </span>
 

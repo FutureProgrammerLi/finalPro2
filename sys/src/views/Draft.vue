@@ -81,7 +81,7 @@ export default {
 .el-table{
     margin:0;
     padding:0;
-    height:75vh;
+    height:75vh!important;
     overflow:auto;
 }
 </style>

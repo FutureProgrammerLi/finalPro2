@@ -107,7 +107,7 @@ exports.saveDrafts = function (req, res, next) {
 }
 
 exports.deleteDrafts = function(req,res,next){
-    console.log(req.params)
+    // console.log(req.params)
     let {id} = req.params
     
     //用id取路径,删除储存信息的文件
@@ -119,7 +119,7 @@ exports.deleteDrafts = function(req,res,next){
         data1 = JSON.parse(JSON.stringify(data1))
         let relPath = data1[0].path
         let absoPath = path.join(__dirname,`../${relPath}`)
-        // console.log(absoPath)
+        console.log(absoPath)
         fs.unlink(absoPath,err=>{
             if(err){
                 res.send({status:500,msg:"删除相关文件操作失败"})
