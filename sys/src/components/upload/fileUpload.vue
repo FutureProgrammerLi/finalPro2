@@ -3,6 +3,7 @@
     <el-upload class="upload-demo" ref="uploadRef" action="/api/posts" accept=".doc,.docx,.txt" :data="myData"  :limit="1" :headers="myHeader" :on-exceed="handleExceed" :on-change="fileCheck" :file-list="fileList" :http-request="overwriteSubmit" :auto-upload="false">
         <el-button size="small" type="primary">点击上传稿件文件</el-button>
         <div slot="tip" class="el-upload__tip">上传文件不能大于5M</div>
+        <div slot="tip" class="el-upload__tip">仅支持.doc, .docx, .txt格式</div>
     </el-upload>
 </div>
 </template>

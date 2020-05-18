@@ -22,7 +22,7 @@
         <uploadFile ref='fileupload' class="center" />
         <div class="btns">
             <el-button round type="primary" @click="post">投稿</el-button>
-            <el-button round type="primary" @click="toDraft">保存</el-button>
+            <el-button round type="primary" @click="save">保存</el-button>
             <!-- <el-button round type="primary" @click="test">保存</el-button> -->
             <!--应覆盖原有内容 -->
             <!-- 提示退出后不保存,退出确认 -->
@@ -115,7 +115,7 @@ export default {
                 mixedObj.id = this.$route.params.info.id
             }
             this.$http.post(`/api/draft/saveDrafts`, mixedObj).then(res => {
-                console.log(res)
+                // console.log(res)
                 if (res.data.status === 201) {
                     this.$message.success('保存成功')
                     this.$router.push('/draft')

@@ -6,7 +6,7 @@ const iconv = require('iconv-lite')
 exports.returnList = function(req,res,next){
 let {roleid} = req.params
 if(roleid < 2){     //判断身份
-     const sql1 = `select * from infopath where type='post' and state='todo';`  //list
+     const sql1 = `select * from infopath where type='post' ;`  //list
      const sql2 = `select count(*) as total from infopath where type='post' and state='todo';` //total
      var sentObj = {}
      sentObj.tableData = []
@@ -42,37 +42,47 @@ if(roleid < 2){     //判断身份
 }
 
 exports.returnContent = function(req,res,next){
-   // console.log(req.params,req.query,req.body) //params传过来的在req.query
    let getPath = req.query.path   //infopath里面的path
+   let id = req.query.id
+   // console.log(id)
    // console.log(getPath)
    let absPath = path.join(__dirname,`../${getPath}`)
    // console.log(absPath)
    let infoContent = fs.readFileSync(absPath,'utf-8')  //信息内容
    infoContent = JSON.parse(infoContent)
+   const getComment = `select comment from commenttable where infoid='${id}'`
    // console.log(content)
-   if(infoContent[0]){       //有上传文件
-      const uid =infoContent[0].uid
-      const query = `select uploadPath from uploadpath where uid='${uid}'` //获取上传的文件在服务器的路径
-      connection.query(query,(err,data)=>{
-         if(err){
-            res.send({status:500,msg:'数据库操作失败'})
-            throw err         
-         }
-         data = JSON.parse(JSON.stringify(data))
-         let relPath = data[0].uploadPath
-         let combined = path.join(__dirname,`../${relPath}`)
-         let contentObj = Object.assign({},infoContent)
-         // console.log(path.extname(combined),path.extname(combined) == 'txt')
-         if(path.extname(combined) == '.txt'){
-            let fileContent = fs.readFileSync(combined)
-            let utfContent = iconv.decode(fileContent,'gbk')
-            contentObj.utfContent = utfContent
-         }
-         res.status(200).send(contentObj)    //信息和文件内容整合在一个对象
-      })
-   }else{
-   res.send(infoContent)  //只有信息内容
-   }    
+   connection.query(getComment,(err,response)=>{
+      if(err){
+         throw err
+      }
+      if(response.length!=0){
+         infoContent.comment = response[0].comment
+      }
+      if(infoContent[0]){       //有上传文件
+         const uid =infoContent[0].uid
+         const query = `select uploadPath from uploadpath where uid='${uid}'` //获取上传的文件在服务器的路径
+         connection.query(query,(err,data)=>{
+            if(err){
+               res.send({status:500,msg:'数据库操作失败'})
+               throw err         
+            }
+            data = JSON.parse(JSON.stringify(data))
+            let relPath = data[0].uploadPath
+            let combined = path.join(__dirname,`../${relPath}`)
+            let contentObj = Object.assign({},infoContent)
+            // console.log(path.extname(combined),path.extname(combined) == 'txt')
+            if(path.extname(combined) == '.txt'){
+               let fileContent = fs.readFileSync(combined)
+               let utfContent = iconv.decode(fileContent,'gbk')
+               contentObj.utfContent = utfContent
+            }
+            res.status(200).send(contentObj)    //信息和文件内容整合在一个对象
+         })
+      }else{
+      res.send(infoContent)  //只有信息内容
+      }
+   })      
 }
 
 exports.changeState = function(req,res,next){

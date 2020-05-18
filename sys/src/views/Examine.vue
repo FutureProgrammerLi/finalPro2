@@ -16,6 +16,13 @@
                     <el-tag v-else type="plain">否</el-tag>
                 </template>
             </el-table-column>
+            <el-table-column label="状态" prop="state" sortable>
+                <template slot-scope="scope">
+                    <el-tag v-if="scope.row.state=='passed'" type="success">已通过</el-tag>
+                    <el-tag v-if="scope.row.state=='unpassed'" type="danger">未通过</el-tag>
+                    <el-tag v-if="scope.row.state=='todo'" type="plain">待审核</el-tag>
+                </template>
+            </el-table-column>
             <el-table-column align="right">
                 <template slot="header" slot-scope="scope">
                     <el-input v-model="search" size="mini" placeholder="输入关键字搜索" @blur="dealWithScope(scope)" />
@@ -51,17 +58,19 @@ export default {
             // console.log(index,row)
             this.$http.get(`/api/examine/getExamineContent`, {
                 params: {
-                    path: row.path
+                    path: row.path,
+                    id:row.id
                 }
             }).then(res => {
                 // console.log(res.status)
-                console.log(res)
+                // console.log(res)
                 if (res.status === 200) {
                     this.$router.push({
                         name: 'EditExamine',
                         params: {
                             info: res.data,
-                            id:row.id
+                            id:row.id,
+                            state:row.state
                         }
                     })
                 }else{
@@ -91,7 +100,10 @@ export default {
         if (this.$store.state.userInfo.roleid < 2) {
             this.$store.dispatch('asyncGetExamineList', this.$store.state.userInfo.roleid)
         }
-    }
+    },
+    mounted () {
+        // console.log(this.filteredData);
+    },
 }
 </script>
 

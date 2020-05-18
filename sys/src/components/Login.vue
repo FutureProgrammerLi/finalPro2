@@ -71,6 +71,7 @@ export default {
                                 this.$store.commit('getUserInfo', res.data)
                                 this.$store.dispatch('asyncGetUploadInfo',res.data.username)
                                 window.sessionStorage.setItem('token', res.data.token) //存储token到sessionStorage里面
+                                window.sessionStorage.setItem('roleid',res.data.roleid)
                                 // console.log(this.$store.state.userInfo)
                                 this.$router.push('/info')
                             } else {

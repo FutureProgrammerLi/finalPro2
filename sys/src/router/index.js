@@ -3,8 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import store from '../store/index'
-import VueSocketio from 'vue-socket.io'
+import Message from 'element-ui'
 
 
 
@@ -15,7 +14,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
   },
   {
     path:'/home',
@@ -112,7 +111,25 @@ router.beforeEach((to,from,next)=>{     //简易判断是否带有token,没有�
 router.beforeEach((to,from,next)=>{    //退出登录
   if(to.path ==='/exit'){
     window.sessionStorage.clear()
-    return next(' /')
+    return next('/')
+  }
+  next()
+})
+router.beforeEach((to,from,next)=>{    //退出登录
+  if(to.path ==='/manage' || to.path ==='/examine' || to.path ==='/announce' || to.path ==='/editexamine'){
+    const roleid = window.sessionStorage.getItem('roleid')
+    if(roleid == 2){
+      window.alert('权限不足!')
+      return next('/')
+    }
+  }
+  if(to.path ==='/manage'){
+    const roleid = window.sessionStorage.getItem('roleid')
+    // console.log(roleid,roleid != 0)
+    if(roleid != 0 ){
+      window.alert('权限不足!')
+      return next('/')
+    }
   }
   next()
 })

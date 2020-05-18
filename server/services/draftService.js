@@ -54,7 +54,6 @@ exports.getContent = function (req, res, next) {
 }
 }
 
-//并没用到,莫名奇妙的接口
 exports.saveDrafts = function (req, res, next) {
     // console.log(req.body)
 
@@ -139,4 +138,8 @@ exports.deleteDrafts = function(req,res,next){
             res.send({status:500,msg:"删除对应记录失败"})
         }
     })
+}
+
+exports.editDraft = function (req,res,next){
+    console.log(req.body)
 }

@@ -39,11 +39,11 @@
         </el-form>
         <el-form :model="commentForm" label-width="180px" :rules="rules">
             <el-form-item label="审核评论:" prop="comment">
-                <el-input type="textarea" :row="7" v-model="commentForm.comment"></el-input>
+                <el-input type="textarea" :row="7" v-model="commentForm.comment" maxlength="300" show-word-limit></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="check('passed')">通过</el-button>
-                <el-button type="danger" @click="check('unpassed')">不通过</el-button>
+                <el-button v-if="articleState =='todo'" type="primary" @click="check('passed')">通过</el-button>
+                <el-button v-if="articleState =='todo'" type="danger" @click="check('unpassed')">不通过</el-button>
                 <el-button @click="goBack">返回</el-button>
             </el-form-item>
         </el-form>
@@ -65,6 +65,7 @@ export default {
                 comment: ''
             },
             state: '',
+            articleState:'',
             rules: {
                 comment: [{
                     required: true,
@@ -106,8 +107,8 @@ export default {
             })
         },
         check(state) {
-            // console.log(state,typeof state)
-            if (this.commentForm.comment != '' || this.commentForm.comment.length < 300) {
+            // console.log(this.commentForm.comment)
+            if (this.commentForm.comment != '' ) {
                 // console.log(this.commentForm.comment.length )
                 this.state = state
                 let paramsObj = {
@@ -119,6 +120,7 @@ export default {
                 }
                 // this.$store.dispatch('commentsInsert',paramsObj)
                 this.$http.get(`/api/examine/changeState/${this.id}/${this.state}`).then(res => {
+                    // console.log(res)
                     if (res.data.status === 200) {
                         this.$store.dispatch('commentsInsert', paramsObj)
                         this.$router.push('/examine')
@@ -137,23 +139,20 @@ export default {
     },
     created() {
         this.content = this.$route.params.info;
-        // console.log(this.$route.params)
+        if(this.$route.params.info.comment != ''){
+            this.commentForm.comment = this.$route.params.info.comment
+        }
+        this.articleState = this.$route.params.state
         this.id = this.$route.params.id
+        // console.log(this.articleState)
     },
     beforeMount() {
         for (const i in this.content) {
             this.rebuildObj[i] = this.content[i]
             // console.log(i)
         }
+        // console.log(this.$store.state.allPostList)
         return
-        // Object.keys(this.content).forEach(i => {
-        //     console.log(i)
-        //     // if (i != 'username' && i != 'kind' && i != 'draftToPost') {
-        //     //     this.rebuildObj[i] = this.content[i] //用来隐藏信息
-        //     // }
-        // })
-        //     console.log(this.rebuildObj)
-        // }
     }
 }
 </script>

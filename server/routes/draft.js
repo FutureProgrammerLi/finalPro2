@@ -8,6 +8,8 @@ router.get('/getContent/:username/:id',draftService.getContent)
 
 router.post('/saveDrafts',draftService.saveDrafts)
 
+router.post('/editDrafts',draftService.editDraft)
+
 router.delete('/deleteDrafts/:id',draftService.deleteDrafts)
 
 module.exports = router
