@@ -1,7 +1,6 @@
 <template>
 <div id="box">
     <el-button type="primary" @click="createDraft">新建草稿</el-button>
-    <!-- <el-button @click="test">test</el-button> -->
 <el-table :data="draftList?draftList:[]" stripe border style="width: 100%" height="250">
     <el-table-column prop="title" label="稿件标题" width="300">
     </el-table-column>
@@ -28,11 +27,7 @@ export default {
         }
     },
     methods: {
-        test(){
-          console.log(this.$store.state.draftList)
-        },
         editDraft(content) {
-            // console.log(content)
             this.$router.push({
                 name: 'EditDraft',  //name用params传, path用query传
                 params: {
@@ -57,7 +52,6 @@ export default {
                         this.$message.error('服务器操作失败')
                     }else{
                         this.$message.error('未知错误')
-                        console.log(res)
                     }
                 })
             }).catch(()=>{})

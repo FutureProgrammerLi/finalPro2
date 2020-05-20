@@ -5,7 +5,7 @@
         <!-- {{correspond}}<br>
         {{sessions}} -->
         <!-- {{sessions}} -->
-        {{correspond}}
+        <!-- {{correspond}} -->
         <li v-for="item in correspond" :key="item.id">
             <p class="time">
                 <span>{{ item.senttime }}</span>
@@ -33,10 +33,6 @@ export default {
           }
       })
       return mid 
-      // let receive = this.getterSessions.filter(i=>(i.from_user == this.username && i.to_user == this.$store.state.userInfo.username))
-        // let send = this.getterSessions.filter(i=>(i.from_user == this.$store.state.userInfo.username &&i.to_user == this.username))
-        // send.map(i=>i.self = true)
-        // return [...send,...receive]
       }
     },
     methods: {

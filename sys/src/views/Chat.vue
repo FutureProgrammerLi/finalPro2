@@ -1,26 +1,15 @@
 <template>
 <div id="topDiv">
-    <!-- <el-button @click="test">test</el-button> -->
-    <!-- {{val}}
-    <el-button @click="testClientEmit">testClientEmit</el-button>
-    <el-button @click="testServertEmit">testServertEmit</el-button>
-    <el-button @click="testClientOn">testClientOn</el-button> -->
     <div class="sidebar">
         <card />
         <list @fromList="toMsg" />
-        <!-- <el-input type="text" v-model="to"></el-input> -->
     </div>
     <div class="main">
         <keep-alive>
             <message :username="username" />
         </keep-alive>
-            <inputBox @sendMessage="testClientEmit" :username="username" />
-        
-        <!-- <div class="text">
-            <textarea placeholder="按 Ctrl + Enter 发送" v-model="content"></textarea>
-        </div> -->
+        <inputBox @sendMessage="testClientEmit" :username="username" />
     </div>
-
 </div>
 </template>
 
@@ -43,8 +32,14 @@ export default {
         message,
         inputBox
     },
+    data() {
+        return {
+            val: '',
+            to: '',
+            username: ''
+        }
+    },
     created() {
-        // this.initData();
         this.$store.dispatch('asyncGetUserList')
         this.$store.dispatch('getComment', this.$store.state.userInfo.username)
         this.$socket.emit('regis', this.$store.state.userInfo.username)
@@ -56,22 +51,6 @@ export default {
 
     computed: {
         ...mapState(['sessions', 'userInfo']),
-    },
-    data() {
-        return {
-            val: '',
-            to: '',
-            username: ''
-        }
-    },
-    sockets: {
-        connect() {
-            console.log('连接成功')
-        },
-        receiveMsg(res) {
-            this.sessions.push(res)
-            // console.log(this.sessions)
-        }
     },
     methods: {
         testClientEmit(content) {
@@ -85,32 +64,22 @@ export default {
             }
             this.$socket.emit('sendMsg', JSON.stringify(contentObj))
         },
-        testServertEmit() {
-
-        },
-        testClientOn() {
-
-        },
-        dealWithScope() {
-
-        },
-        handleEdit(index, row) {
-            console.log(index, row);
-        },
-        handleDelete(index, row) {
-            console.log(index, row);
-        },
         toMsg(username) {
             this.to = username
             this.username = username
         },
-        test() {
-            console.log(this.sessions)
-        },
         beforeDestroy() {
             sessionStorage.setItem('sessions', this.sessions)
+        }  
+    },
+        sockets: {
+        connect() {
+            console.log('连接成功')
+        },
+        receiveMsg(res) {
+            this.sessions.push(res)
         }
-    }
+    },
 }
 </script>
 
