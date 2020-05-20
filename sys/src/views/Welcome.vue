@@ -27,7 +27,9 @@
             </el-header>
             <el-main>
                 <keep-alive include="Chat">
-                    <router-view />
+                    <transition name="slide-fade">
+                        <router-view />
+                    </transition>
                 </keep-alive>
             </el-main>
             <el-footer>
@@ -138,13 +140,25 @@ body>.el-container {
 #topic {
     display: flex;
     justify-content: center;
-    align-items:center;
+    align-items: center;
     font-size: 20px;
     font-weight: bold;
     color: white;
-    height:60px;
+    height: 60px;
     background-color: #2e2f9b;
 }
 
+.slide-fade-enter-active {
+    transition: all .2s ease;
+}
 
+.slide-fade-leave-active {
+    transition: all .5s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+
+.slide-fade-enter,
+.slide-fade-leave-to {
+    transform: translateX(10px);
+    opacity: 0;
+}
 </style>

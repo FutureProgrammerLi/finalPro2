@@ -113,12 +113,20 @@ exports.returnUserList = (req,res,next)=>{
 exports.returnSessionList = (req,res,next)=>{
     console.log(req.params)
     let {username} = req.params
-    const sql = `select from_user,content,senttime,state from msgtable where to_user='${username}';`
-    connection.query(sql,(err,msgs)=>{
+    const sql = `select id,from_user,to_user,content,senttime,state from msgtable where to_user='${username}';`
+    const sql2 = `select id,from_user,to_user,content,senttime,state from msgtable where from_user='${username}';`
+    connection.query(sql,(err,data)=>{
         if(err){
             throw err
         }
-        res.send(msgs)
+    //    console.log(data)
+       connection.query(sql2,(err,data2)=>{
+           if(err){
+               throw err
+           }
+           data = [...data,...data2]
+           res.send(data)
+       })
     })
 }
 

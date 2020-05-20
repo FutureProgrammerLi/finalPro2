@@ -5,7 +5,7 @@
         <!-- {{correspond}}<br>
         {{sessions}} -->
         <!-- {{sessions}} -->
-        <!-- {{correspond}} -->
+        {{correspond}}
         <li v-for="item in correspond" :key="item.id">
             <p class="time">
                 <span>{{ item.senttime }}</span>
@@ -26,7 +26,17 @@ export default {
       ...mapState(['sessions','userlist']),
       ...mapGetters(['getterSessions']),
       correspond(){  //对应用户或自己发的
-        return this.getterSessions.filter(i=>i.from_user == this.username || i.to_user == this.username||i.from == this.username || i.to == this.username) //  
+      let mid = this.getterSessions.filter(i=>(i.from_user == this.username && i.to_user == this.$store.state.userInfo.username)||(i.from_user == this.$store.state.userInfo.username &&i.to_user == this.username))
+      mid.forEach(i=>{
+          if(i.from_user == this.$store.state.userInfo.username){
+              i.self = true
+          }
+      })
+      return mid 
+      // let receive = this.getterSessions.filter(i=>(i.from_user == this.username && i.to_user == this.$store.state.userInfo.username))
+        // let send = this.getterSessions.filter(i=>(i.from_user == this.$store.state.userInfo.username &&i.to_user == this.username))
+        // send.map(i=>i.self = true)
+        // return [...send,...receive]
       }
     },
     methods: {

@@ -52,11 +52,8 @@ app.use(function (req,res,next){
     // console.log(result)
     // console.log('1')
     if(result == 'err'){
-      // console.log('2')
-      // console.log(result)
       res.send({"status":"403","msg":"登录已过期或无权查看该页面"})
     }else{
-      // console.log('3')
       next()
     }
   }
@@ -65,12 +62,6 @@ app.use(function (req,res,next){
     next()
   }
   })
-
-  // app.use(function(req,res,next){
-//   console.log('what')
-//   console.log(req.url)
-// })
-
   // 带路径的用法并且可以打印出路有表
 mount(app, path.join(process.cwd(), '/routes'), true)
 
@@ -119,24 +110,22 @@ io.on('connection',socket=>{
     if(tableObj[toName] && tableObj[toName]["online"]){//不在线的会找不到.就发送不出去
       let toID = tableObj[toName]["id"]
       let toSocket = _.findWhere(io.sockets.sockets,{id:toID}) 
-      if(toSocket){
+      if(toSocket){  //有没必要?
         toSocket.emit('receiveMsg',data)
       }
       // io.sockets.connected[toID].emit('receiveMsg','hello!')
-    }else{
+    }
       //不在线就存起来
+      //在不在线都要存
       let {from_user,to_user,content,senttime}=data
-      // console.log(data)
       const sql = `insert into msgtable(from_user,to_user,content,senttime) values('${from_user}','${to_user}','${content}','${senttime}');`
       connection.query(sql,(err,data)=>{
         if(err){
           throw err
         }
-        console.log(data)
+        // console.log(data)
       })
-    }
-    // console.log(tableObj)
-    // console.log(data)
+
   })
   socket.on('leave',username=>{
     tableObj[username]["online"] = false
